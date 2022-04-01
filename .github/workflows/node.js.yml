@@ -20,5 +20,6 @@ jobs:
          port: ${{ secrets.PORT }}
          script: |
            whoami
+           cd ./nft_game_server
            ls -al
            ./deploy.sh
