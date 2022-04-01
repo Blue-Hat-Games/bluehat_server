@@ -19,4 +19,6 @@ jobs:
          key: ${{ secrets.KEY }}
          port: ${{ secrets.PORT }}
          script: |
+           whoami
+           ls -al
            ./deploy.sh
