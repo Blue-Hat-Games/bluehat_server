@@ -19,5 +19,4 @@ jobs:
          key: ${{ secrets.KEY }}
          port: ${{ secrets.PORT }}
          script: |
-           cd ./nft_game_server
            ./deploy.sh
