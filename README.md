@@ -1,2 +1,4 @@
-# bluehat_server
+# Bluehat server
 Bluehat Game server
+
+## Contributor
