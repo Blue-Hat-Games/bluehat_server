@@ -7,7 +7,6 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var nftRouter = require('./routes/nft');
-
 var app = express();
 
 // Default Setting
@@ -44,3 +43,4 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
