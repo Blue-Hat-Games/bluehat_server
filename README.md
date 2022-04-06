@@ -2,3 +2,5 @@
 Bluehat Game server
 
 ## Contributor
+
+seonghun-dev
