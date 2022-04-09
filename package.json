@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "caver-js": "^1.8.1",
@@ -19,6 +19,7 @@
     "mailgun-js": "^0.22.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.15",
     "path": "^0.12.7",
     "sequelize": "^6.18.0"
   }

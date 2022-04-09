@@ -5,6 +5,7 @@ const userCtrl = require('../controllers/users.ctrl');
 //가독성을 위해 여기에서는 라우터에 해당하는 컨트롤러 지정만 수행
 
 /* GET users listing. */
-router.get('/', userCtrl.responseTest);
+router.get("/", userCtrl.responseTest);
+router.post("/", userCtrl.addUser);
 
 module.exports = router;
