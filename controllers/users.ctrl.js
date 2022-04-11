@@ -20,7 +20,8 @@ exports.addUser = async (req, res) => {
         });
     } catch (e) {
         if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY")
-            return (res.status(409).send('duplicated email'));
+            user = await models.user.findOne({email: req.body.email});
+            return (res.status(200).send(user));
         if (e == "EMAIL_NOT_VERIFIED")
             return (res.status(409).send('email not verified'));
         else
