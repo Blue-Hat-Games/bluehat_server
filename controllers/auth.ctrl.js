@@ -8,8 +8,13 @@ exports.verifyAuthEmail = function (req, res, next) {
     authCache[userMailAdress] = false;
   
     if (authUtils.verifyEmail(userMailAdress)) {
-      authUtils.sendVerifyEmail(userMailAdress, authKey);
-      res.send("success", 200);
+      sendResult = authUtils.sendVerifyEmail(userMailAdress, authKey);
+      if (sendResult){
+        res.send("success", 200);
+      }
+      else{
+        res.send("fail", 400);
+      }
     } else {
       res.send("fail", 400);
     }
