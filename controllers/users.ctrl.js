@@ -12,7 +12,7 @@ exports.addUser = async (req, res) => {
 		if ((await userUtils.getAuthUser(email)) == false) {
 			throw "EMAIL_NOT_VERIFIED";
 		}
-		user = await models.user.findOne({ where: { email: email } });
+		let user = await models.user.findOne({ where: { email: email } });
 		if (user) {
 			return res.status(200).send(user);
 		} else {
