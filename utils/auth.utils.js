@@ -34,7 +34,7 @@ exports.decryptEmail = function (data) {
 
 // 이메일 내용 생성
 getEmailContents = function (authKey) {
-  const requestUrl = `http://localhost:3000/auth?authKey=${encodeURIComponent(
+  const requestUrl = `http://api.bluehat.games/auth?authKey=${encodeURIComponent(
     authKey
   )}`;
   const emailContents = ejs.render(mailContents, { link: requestUrl });
