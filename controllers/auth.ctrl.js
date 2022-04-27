@@ -1,25 +1,25 @@
 const authUtils = require("../utils/auth.utils");
 
 exports.verifyAuthEmail = function (req, res, next) {
-  try{
+  try {
     const userMailAdress = req.body.email;
     const authKey = authUtils.encryptEmail(userMailAdress);
-  
+
     authCache[userMailAdress] = false;
-  
+
     if (authUtils.verifyEmail(userMailAdress)) {
       sendResult = authUtils.sendVerifyEmail(userMailAdress, authKey);
-      if (sendResult){
+      if (sendResult) {
         res.send("success", 200);
       }
-      else{
+      else {
         res.send("fail", 400);
       }
     } else {
       res.send("fail", 400);
     }
 
-  } catch (e){
+  } catch (e) {
     console.log(e);
   }
 

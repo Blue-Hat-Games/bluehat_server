@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "restart": "pm2 restart bin/www --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time"
   },
   "dependencies": {
     "caver-js": "^1.8.1",
