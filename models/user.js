@@ -17,6 +17,16 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            wallet_address: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true
+            },
+            username: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true
+            },
             coin: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
