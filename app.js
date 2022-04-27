@@ -33,6 +33,7 @@ app.use("/users", usersRouter);
 app.use("/nft", nftRouter);
 app.use("/auth", authRouter);
 app.use('/animal', animalRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -50,7 +51,3 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
