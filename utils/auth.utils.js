@@ -1,8 +1,8 @@
 // 이메일 전송 API
 const mailgun = require("mailgun-js");
-
 // 이메일 인증 키 생성
 const Crypto = require("crypto-js");
+const redisClient = require("../utils/redis");
 
 // For Email Template
 var ejs = require("ejs");
@@ -34,7 +34,7 @@ exports.decryptEmail = function (data) {
 
 // 이메일 내용 생성
 getEmailContents = function (authKey) {
-  const requestUrl = `http://bluehat.games/auth?authKey=${encodeURIComponent(
+  const requestUrl = `http://api.bluehat.games/auth?authKey=${encodeURIComponent(
     authKey
   )}`;
   const emailContents = ejs.render(mailContents, { link: requestUrl });
@@ -66,3 +66,21 @@ exports.sendVerifyEmail = function (userMailAdress, authKey) {
   });
   return true;
 };
+
+// 유저이메일 인증 여부 저장, 인증 여부 변경
+exports.setAuthUser = async function (email, value, exp=60*60) {
+  redisClient.set(email, value, {EX: exp},function (err, reply) {
+    if (err) {
+      console.log(err);
+      return false;
+    }
+    console.log(reply);
+    return true
+  });
+}
+exports.validAuthUser = async function (email) {
+  if ((await redisClient.exists(email)) == 1) {
+    return true;
+  }
+  return false;
+}

@@ -11,6 +11,7 @@ var indexRouter = require("./routes");
 var usersRouter = require("./routes/users");
 var nftRouter = require("./routes/nft");
 var authRouter = require("./routes/auth");
+var animalRouter = require("./routes/animal");
 var app = express();
 
 // Default Setting
@@ -31,6 +32,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/nft", nftRouter);
 app.use("/auth", authRouter);
+app.use('/animal', animalRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
