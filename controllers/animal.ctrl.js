@@ -1,10 +1,15 @@
 const models = require("../models");
 
-exports.getUserAnimal = function (req, res, next) {
-	// DB에서 유저가 가진 모든 동물 조회후 반환
-	let userId = req.params.id;
-	let animals = ["Rabbit"];
-	return res.status(200).send(animals);
+exports.getUserAnimal = async function (req, res, next) {
+  try{
+    // DB에서 유저가 가진 모든 동물 조회후 반환
+    let userId = req.query.user_id;
+    let userAnimal = await models.animal_possession.findAll({ where: { user_id: userId } })
+    return res.status(200).send(userAnimal);
+  } catch(e){
+    console.log(e);
+    return res.status(500).send("Internal Server Error");
+  }
 };
 
 exports.getNewAnimal = async function (req, res, next) {
@@ -33,3 +38,12 @@ exports.getNewAnimal = async function (req, res, next) {
 		return res.status(500).send("Internal Server Error");
 	}
 };
+
+exports.changeAnimalColor = async function (req, res, next) {
+  // 동물 색상 변경
+  return res.status(200).send("ok");
+}
+
+exports.mergeAnimal = async function (req, res, next) {
+  return res.status(200).send("ok");
+}
