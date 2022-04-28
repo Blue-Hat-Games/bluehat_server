@@ -22,10 +22,13 @@ exports.addUser = async (req, res) => {
 				username: username,
 				login_type: "email",
 				coin: 0,
-			});
+			}).then(user => {
+                console.log(user);
+            });
 			return res.status(201).send(user);
 		}
 	} catch (e) {
+        console.log(e);
 		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
 			return res.status(400).send("dup email or wallet_address or username");
 		} else if (e == "EMAIL_NOT_VERIFIED") {
