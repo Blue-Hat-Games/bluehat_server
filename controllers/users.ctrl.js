@@ -30,12 +30,12 @@ exports.addUser = async (req, res) => {
 				coin: 0,
 			}).then(user => {
 				console.log(user);
+				register_result = {
+					msg: 'Register Success',
+					access_token: makeToken(user.id),
+				}
+				return res.status(201).send(register_result);
 		});
-		register_result = {
-			msg: 'Register Success',
-			access_token: makeToken(user.id),
-		}
-		return res.status(201).send(register_result);
 		}
 	} catch (e) {
 		console.log(e);
