@@ -43,13 +43,13 @@ exports.addUser = async (req, res) => {
 exports.delUser = async (req, res) => {
 	const { email } = req.body;
 	if (email === undefined) {
-		return res.status(400).send({ message: "email is required" });
+		return res.status(400).send(exposts.needParameter);
 	}
 	try{
 		await models.user.destroy({ where: { email: email } });
-		return res.status(200).send({ message: "success" });
+		return res.status(200).send(infoMsg.success);
 	} catch(e){
 		console.log(e);
-		return res.send(500).send("Internal Server Error");
+		return res.send(500).send(exposts.internalServerError);
 	}
 }
