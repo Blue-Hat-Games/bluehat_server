@@ -1,6 +1,7 @@
 const models = require("../models");
 const userUtils = require("../utils/users.utils");
 const errorMsg = require("../message/msg_error.js");
+const {makeToken} = require("../utils/verify.js");
 
 exports.addUser = async (req, res) => {
 	// Check Input Parmeter
@@ -15,7 +16,12 @@ exports.addUser = async (req, res) => {
 		}
 		let user = await models.user.findOne({ where: { email: email } });
 		if (user) {
-			return res.status(200).send(user);
+			acess_token = makeToken(user.email);
+			login_result = {
+				msg: 'Login Success',
+				access_token: makeToken(user.id),
+			}
+			return res.status(200).send(login_result);
 		} else {
 			user = await models.user.create({
 				email: email,
@@ -26,7 +32,11 @@ exports.addUser = async (req, res) => {
 			}).then(user => {
 				console.log(user);
 			});
-			return res.status(201).send(user);
+			register_result = {
+				msg: 'Register Success',
+				access_token: makeToken(user.email),
+			}
+			return res.status(201).send(register_result);
 		}
 	} catch (e) {
 		console.log(e);

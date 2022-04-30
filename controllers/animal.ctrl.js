@@ -4,7 +4,7 @@ const infoMsg = require("../message/msg_info");
 exports.getUserAnimal = async function (req, res, next) {
 	try {
 		// DB에서 유저가 가진 모든 동물 조회후 반환
-		let userId = req.query.user_id;
+		let userId = req.userId;
 		let userAnimal = await models.animal_possession.findAll({ where: { user_id: userId } })
 		return res.status(200).send(userAnimal);
 	} catch (e) {
@@ -26,7 +26,7 @@ exports.getNewAnimal = async function (req, res, next) {
 				color: null,
 				name: "testAnimal",
 				tier: 1,
-				user_id: req.body.userId,
+				user_id: req.userId,
 				animal_id: animal.id,
 			})
 			.then((user) => {
