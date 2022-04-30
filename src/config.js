@@ -21,4 +21,4 @@ const caver = new Caver(
   )
 );
 
-module.exports = {accessKeyId, secretAccessKey, authorization, caver, sellerPrivateKey}
+module.exports = { accessKeyId, secretAccessKey, authorization, caver, sellerPrivateKey }

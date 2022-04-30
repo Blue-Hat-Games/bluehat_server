@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
         },
         {
             sequelize,
-            tableName: "noun_item",
+            tableName: "noun_name",
             timestamps: false,
         }
     );

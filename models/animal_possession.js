@@ -13,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: true,
             },
             color: {
-                type: DataTypes.STRING.BINARY,
+                type: DataTypes.STRING,
                 allowNull: true,
             },
             name: {
