@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "pm2 start ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time",
-    "restart": "pm2 restart ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time"
+    "start": "SYNC=FALSE pm2 start ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
+    "restart": "SYNC=FALSE pm2 restart ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
+    "restart_s": "SYNC=TRUE pm2 restart ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
+    "start_s": "SYNC=TRUE pm2 start ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env"
   },
   "dependencies": {
     "caver-js": "^1.8.1",
