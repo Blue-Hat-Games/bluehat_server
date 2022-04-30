@@ -1,0 +1,3 @@
+exports.success = {
+    msg: "success"
+}
