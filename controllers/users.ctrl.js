@@ -5,8 +5,8 @@ const {makeToken} = require("../utils/verify.js");
 
 exports.addUser = async (req, res) => {
 	// Check Input Parmeter
-	const { email, wallet_address, username } = req.body;
-	if ((email === undefined) | (wallet_address === undefined) | (username === undefined)) {
+	const { email, wallet_address} = req.body;
+	if ((email === undefined) | (wallet_address === undefined)) {
 		return res.status(400).send({ message: "email, wallet_address, username is required" });
 	}
 
@@ -16,7 +16,6 @@ exports.addUser = async (req, res) => {
 		}
 		let user = await models.user.findOne({ where: { email: email } });
 		if (user) {
-			acess_token = makeToken(user.email);
 			login_result = {
 				msg: 'Login Success',
 				access_token: makeToken(user.id),
@@ -26,17 +25,16 @@ exports.addUser = async (req, res) => {
 			user = await models.user.create({
 				email: email,
 				wallet_address: wallet_address,
-				username: username,
 				login_type: "email",
 				coin: 0,
 			}).then(user => {
 				console.log(user);
-			});
-			register_result = {
-				msg: 'Register Success',
-				access_token: makeToken(user.email),
-			}
-			return res.status(201).send(register_result);
+		});
+		register_result = {
+			msg: 'Register Success',
+			access_token: makeToken(user.id),
+		}
+		return res.status(201).send(register_result);
 		}
 	} catch (e) {
 		console.log(e);
