@@ -5,6 +5,10 @@ encryptVal = function (data) {
 	return Crypto.AES.encrypt(data, process.env.USER_AUTH_KEY).toString();
 };
 
+exports.encryptValtest = function (data) {
+	return Crypto.AES.encrypt(data, process.env.USER_AUTH_KEY).toString();
+};
+
 
 exports.decryptVal = function (data) {
 	return Crypto.AES.decrypt(data, process.env.USER_AUTH_KEY).toString(Crypto.enc.Utf8);
