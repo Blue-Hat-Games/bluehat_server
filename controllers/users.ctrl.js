@@ -2,13 +2,15 @@ const models = require("../models");
 const userUtils = require("../utils/users.utils");
 const errorMsg = require("../message/msg_error.js");
 const infoMsg = require("../message/msg_info.js");
-const {makeToken} = require("../utils/verify.js");
+const { makeToken } = require("../utils/verify.js");
+const logger = require("../config/logger");
 
 exports.addUser = async (req, res) => {
+	logger.info(`${req.method} ${req.url}`);
 	// Check Input Parmeter
-	const { email, wallet_address} = req.body;
+	const { email, wallet_address } = req.body;
 	if ((email === undefined) | (wallet_address === undefined)) {
-		return res.status(400).send({ message: "email, wallet_address, username is required" });
+		return res.status(400).send(errorMsg.notEnoughRequirement);
 	}
 
 	try {
@@ -35,10 +37,11 @@ exports.addUser = async (req, res) => {
 					access_token: makeToken(user.id),
 				}
 				return res.status(201).send(register_result);
-		});
+			});
 		}
 	} catch (e) {
 		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
 		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
 			return res.status(400).send(errorMsg.duplicateInfo);
 		} else if (e == "EMAIL_NOT_VERIFIED") {
@@ -50,15 +53,17 @@ exports.addUser = async (req, res) => {
 };
 
 exports.delUser = async (req, res) => {
+	logger.info(`${req.method} ${req.url}`);
 	const { email } = req.body;
 	if (email === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
-	try{
+	try {
 		await models.user.destroy({ where: { email: email } });
 		return res.status(200).send(infoMsg.success);
-	} catch(e){
+	} catch (e) {
 		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
 }

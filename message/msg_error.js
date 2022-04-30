@@ -17,3 +17,7 @@ exports.fail = {
 exports.needParameter = {
     msg: "need parameter"
 }
+
+exports.notEnoughRequirement = {
+    msg: "not enough request requirement, please check api documents"
+}

@@ -94,7 +94,9 @@ async function dbConnection() {
     .authenticate()
     .then(() => {
       console.log("Connection has been established successfully.");
-      // return db.sequelize.sync({ alter: true }); //DB 명세 변경할때만 주석 풀어서 Sync
+      if (process.env.SYNC && process.env.SYNC == "TRUE") {
+        return db.sequelize.sync({ alter: true }); //DB 명세 변경할때만 주석 풀어서 Sync
+      }
     })
     .then(() => {
       console.log("DB Sync complete.");

@@ -1,7 +1,10 @@
 const authUtils = require("../utils/auth.utils");
 const infoMsg = require("../message/msg_info");
 const errorMsg = require("../message/msg_error");
+const logger = require("../config/logger");
+
 exports.verifyAuthEmail = function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
 	try {
 		const userMailAdress = req.body.email;
 		const authKey = authUtils.encryptEmail(userMailAdress);
@@ -19,10 +22,12 @@ exports.verifyAuthEmail = function (req, res, next) {
 		}
 	} catch (e) {
 		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
 	}
 };
 
 exports.verifyAuthEmailKey = function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
 	try {
 		const userEmail = authUtils.decryptEmail(req.query.authKey);
 		const validAuthkey = authUtils.validAuthUser(userEmail);
@@ -37,6 +42,7 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 		}
 	} catch (e) {
 		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
 	} finally {
 		// application Deeplink 이동
 		res.redirect(301, `http://bluehat.games`);

@@ -7,4 +7,5 @@ router.get("", verifyToken, animalCtrl.getUserAnimal);
 router.post("", verifyToken,animalCtrl.getNewAnimal);
 router.post("/change-color",verifyToken, animalCtrl.changeAnimalColor);
 
+
 module.exports = router;
