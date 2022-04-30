@@ -10,7 +10,7 @@ module.exports = function (sequelize, DataTypes) {
             },
             nft_hash: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             color: {
                 type: DataTypes.STRING.BINARY,
