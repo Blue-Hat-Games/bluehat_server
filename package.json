@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "test": "SYNC=FALSE jest --setupFiles dotenv/config --forceExit --coverage",
     "start": "SYNC=FALSE pm2 start ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
     "restart": "SYNC=FALSE pm2 restart ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
     "restart_s": "SYNC=TRUE pm2 restart ./bin/www --name project --watch --ignore-watch=\"node_modules/* .git/* logs/*\" --time --update-env",
@@ -19,6 +20,7 @@
     "fs": "0.0.1-security",
     "http-errors": "~1.6.3",
     "jade": "^0.31.2",
+    "jest": "^28.0.3",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
     "morgan": "~1.9.1",
@@ -26,6 +28,7 @@
     "nodemon": "^2.0.15",
     "path": "^0.12.7",
     "redis": "^4.0.6",
-    "sequelize": "^6.18.0"
+    "sequelize": "^6.18.0",
+    "supertest": "^6.2.3"
   }
 }
