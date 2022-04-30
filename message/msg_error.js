@@ -13,3 +13,7 @@ exports.duplicateInfo = {
 exports.fail = {
     msg: "fail"
 }
+
+exports.needParameter = {
+    msg: "need parameter"
+}
