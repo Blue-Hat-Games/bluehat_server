@@ -1,11 +1,12 @@
 const models = require("../models");
 const userUtils = require("../utils/users.utils");
 const errorMsg = require("../message/msg_error.js");
+const {makeToken} = require("../utils/verify.js");
 
 exports.addUser = async (req, res) => {
 	// Check Input Parmeter
-	const { email, wallet_address, username } = req.body;
-	if ((email === undefined) | (wallet_address === undefined) | (username === undefined)) {
+	const { email, wallet_address} = req.body;
+	if ((email === undefined) | (wallet_address === undefined)) {
 		return res.status(400).send({ message: "email, wallet_address, username is required" });
 	}
 
@@ -15,18 +16,25 @@ exports.addUser = async (req, res) => {
 		}
 		let user = await models.user.findOne({ where: { email: email } });
 		if (user) {
-			return res.status(200).send(user);
+			login_result = {
+				msg: 'Login Success',
+				access_token: makeToken(user.id),
+			}
+			return res.status(200).send(login_result);
 		} else {
 			user = await models.user.create({
 				email: email,
 				wallet_address: wallet_address,
-				username: username,
 				login_type: "email",
 				coin: 0,
 			}).then(user => {
 				console.log(user);
-			});
-			return res.status(201).send(user);
+		});
+		register_result = {
+			msg: 'Register Success',
+			access_token: makeToken(user.id),
+		}
+		return res.status(201).send(register_result);
 		}
 	} catch (e) {
 		console.log(e);
@@ -39,3 +47,17 @@ exports.addUser = async (req, res) => {
 		}
 	}
 };
+
+exports.delUser = async (req, res) => {
+	const { email } = req.body;
+	if (email === undefined) {
+		return res.status(400).send(exposts.needParameter);
+	}
+	try{
+		await models.user.destroy({ where: { email: email } });
+		return res.status(200).send(infoMsg.success);
+	} catch(e){
+		console.log(e);
+		return res.send(500).send(exposts.internalServerError);
+	}
+}

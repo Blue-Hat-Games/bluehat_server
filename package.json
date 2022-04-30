@@ -17,6 +17,7 @@
     "fs": "0.0.1-security",
     "http-errors": "~1.6.3",
     "jade": "^0.31.2",
+    "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
