@@ -3,11 +3,10 @@
 /**
  * Module dependencies.
  */
-
+const db = require("../models");
 var app = require('../app');
 var debug = require('debug')('nft-game-server:server');
 var http = require('http');
-
 /**
  * Get port from environment and store in Express.
  */
@@ -88,3 +87,23 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+async function dbConnection() {
+  // DB authentication
+  db.sequelize
+    .authenticate()
+    .then(() => {
+      console.log("Connection has been established successfully.");
+      if (process.env.SYNC && process.env.SYNC == "TRUE") {
+        return db.sequelize.sync({ alter: true }); //DB 명세 변경할때만 주석 풀어서 Sync
+      }
+    })
+    .then(() => {
+      console.log("DB Sync complete.");
+    })
+    .catch((err) => {
+      console.log("Unable to connect to the database:", err);
+    });
+};
+
+dbConnection();

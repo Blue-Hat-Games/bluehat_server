@@ -1,0 +1,59 @@
+const models = require("../models");
+const errorMsg = require("../message/msg_error");
+const infoMsg = require("../message/msg_info");
+const logger = require("../config/logger");
+
+exports.getUserAnimal = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	if (req.userId)
+		logger.info(req.userId + ":" + `${req.method} ${req.url}`);
+	try {
+		// DB에서 유저가 가진 모든 동물 조회후 반환
+		let userId = req.userId;
+		let userAnimal = await models.animal_possession.findAll({ where: { user_id: userId } })
+		return res.status(200).send(userAnimal);
+	} catch (e) {
+		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+};
+
+exports.getNewAnimal = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	try {
+		// 새로운 동물 생성
+		const allAnimalLength = await models.animal.count();
+		let animalPickIndex = Math.floor(Math.random() * allAnimalLength + 1);
+		let animal = await models.animal.findOne({ where: { id: animalPickIndex } });
+
+		await models.animal_possession
+			.create({
+				nft_hash: "0",
+				color: null,
+				name: "testAnimal",
+				tier: 1,
+				user_id: req.userId,
+				animal_id: animal.id,
+			})
+			.then((user) => {
+				console.log(user);
+			});
+
+		return res.status(201).send(animal);
+	} catch (e) {
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+};
+
+exports.changeAnimalColor = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	// 동물 색상 변경
+	return res.status(200).send(infoMsg.success);
+}
+
+exports.mergeAnimal = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	return res.status(200).send(infoMsg.success);
+}
