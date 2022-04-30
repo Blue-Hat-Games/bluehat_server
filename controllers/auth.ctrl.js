@@ -1,5 +1,6 @@
 const authUtils = require("../utils/auth.utils");
-
+const infoMsg = require("../message/msg_info");
+const errorMsg = require("../message/msg_error");
 exports.verifyAuthEmail = function (req, res, next) {
 	try {
 		const userMailAdress = req.body.email;
@@ -9,12 +10,12 @@ exports.verifyAuthEmail = function (req, res, next) {
 			authUtils.setAuthUser(userMailAdress, false);
 			sendResult = authUtils.sendVerifyEmail(userMailAdress, authKey);
 			if (sendResult) {
-				res.send("success", 200);
+				res.status(200).send(infoMsg.success);
 			} else {
-				res.send("fail", 400);
+				res.status(400).send(errorMsg.fail);
 			}
 		} else {
-			res.send("fail", 400);
+			res.status(400).send(errorMsg.fail);
 		}
 	} catch (e) {
 		console.log(e);
