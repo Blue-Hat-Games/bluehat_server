@@ -28,7 +28,7 @@ module.exports = function (sequelize, DataTypes) {
         {
             sequelize,
             tableName: "animal_possession",
-            timestamps: false,
+            timestamps: true,
         });
     animal_possession.associate = (models) => {
         animal_possession.belongsTo(models.user, {
