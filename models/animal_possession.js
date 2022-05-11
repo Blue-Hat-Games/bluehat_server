@@ -28,16 +28,17 @@ module.exports = function (sequelize, DataTypes) {
         {
             sequelize,
             tableName: "animal_possession",
-            timestamps: false,
+            timestamps: true,
         });
     animal_possession.associate = (models) => {
         animal_possession.belongsTo(models.user, {
             foreignKey: "user_id",
-            targetKey: "id"
+            targetKey: "id",
         })
         animal_possession.belongsTo(models.animal, {
             foreignKey: "animal_id",
-            targetKey: "id"
+            targetKey: "id",
+            allowNull: false
         })
         animal_possession.belongsTo(models.head_item, {
             foreignKey: "head_item_id",
