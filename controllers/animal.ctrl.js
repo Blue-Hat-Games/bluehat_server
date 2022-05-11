@@ -38,7 +38,7 @@ exports.getUserAnimal = async function (req, res, next) {
 			attributes: ["name", "tier", "color"],
 			raw: true,
 		});
-		return res.status(200).send(userAnimal);
+		return res.status(200).send({"data" : userAnimal});
 	} catch (e) {
 		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
