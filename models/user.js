@@ -32,22 +32,30 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
                 default: 0,
             },
-            deleted:{
+            deleted: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 default: false
-            }
+            },
         },
         {
             sequelize,
             tableName: "user",
-            timestamps: false,
+            timestamps: true,
         }
     );
     user.associate = (models) => {
         user.hasMany(models.animal_possession, {
             foreignKey: "user_id",
             sourceKey: "id",
+            onDelete: 'cascade',
+            allowNull: false,
+        });
+        user.hasMany(models.market, {
+            foreignKey: "user_id",
+            sourceKey: "id",
+            onDelete: 'cascade',
+            allowNull: false,
         });
     };
     return user;

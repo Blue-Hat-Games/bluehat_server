@@ -34,6 +34,8 @@ module.exports = function (sequelize, DataTypes) {
         animal_possession.belongsTo(models.user, {
             foreignKey: "user_id",
             targetKey: "id",
+            onDelete: 'cascade',
+            allowNull: false,
         })
         animal_possession.belongsTo(models.animal, {
             foreignKey: "animal_id",
@@ -56,6 +58,10 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: "pattern_id",
             targetKey: "id"
         })
+        animal_possession.hasMany(models.market, {
+            foreignKey: "animal_possession_id",
+            sourceKey: "id",
+        });
     }
     return animal_possession;
 };
