@@ -32,6 +32,11 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false,
                 default: 0,
             },
+            deleted:{
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                default: false
+            }
         },
         {
             sequelize,
