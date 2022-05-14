@@ -25,8 +25,8 @@ exports.addUser = async (req, res) => {
 			}
 			return res.status(200).send(login_result);
 		} else {
-			const {wallet_address} = req.body;
-			if(wallet_address === undefined){
+			const { wallet_address } = req.body;
+			if (wallet_address === undefined) {
 				return res.status(400).send(errorMsg.notEnoughRequirement);
 			}
 			user = await models.user.create({
@@ -63,10 +63,52 @@ exports.delUser = async (req, res) => {
 		return res.status(400).send(errorMsg.needParameter);
 	}
 	try {
-		await models.user.destroy({ where: { email: email } });
+		const user = await models.user.findOne({ where: { email : email }, attributes:["email", 'deleted'] })
+		if (user) {
+			if(user.deleted){
+				return res.status(409).send(errorMsg.alreadyDeleted);
+			}
+			delEmail = 'deleted.' + email;
+			await models.user.update({ deleted: true, email : delEmail }, { where: { email: email } });
+		}
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
 		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.send(500).send(errorMsg.internalServerError);
+	}
+}
+
+exports.getUserInfo = async (req, res) => {
+	logger.info(`${req.method} ${req.url}`);
+	const userId = req.userId;
+	try {
+		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "wallet_address", "email"] });
+		if (user) {
+			return res.status(200).send(user);
+		} else {
+			return res.status(404).send(errorMsg.notFound);
+		}
+	} catch (e) {
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.send(500).send(errorMsg.internalServerError);
+	}
+}
+
+exports.editUserInfo = async (req, res) => {
+	logger.info(`${req.method} ${req.url}`);
+	const userId = req.userId;
+	const { username, email } = req.body;
+	logger.info('userId: ' + userId);
+	logger.info('username: ' + username);
+	try {
+		if (username !== undefined && userId !== undefined) {
+			await models.user.update({ username: username }, { where: { id: userId } });
+			return res.status(200).send(infoMsg.success);
+		} else {
+			return res.status(400).send(errorMsg.notEnoughRequirement);
+		}
+	} catch (e) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
