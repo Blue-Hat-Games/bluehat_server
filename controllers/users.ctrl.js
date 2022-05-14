@@ -8,8 +8,8 @@ const logger = require("../config/logger");
 exports.addUser = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
 	// Check Input Parmeter
-	const { email, wallet_address } = req.body;
-	if ((email === undefined) | (wallet_address === undefined)) {
+	const { email } = req.body;
+	if (email === undefined) {
 		return res.status(400).send(errorMsg.notEnoughRequirement);
 	}
 
@@ -25,6 +25,10 @@ exports.addUser = async (req, res) => {
 			}
 			return res.status(200).send(login_result);
 		} else {
+			const {wallet_address} = req.body;
+			if(wallet_address === undefined){
+				return res.status(400).send(errorMsg.notEnoughRequirement);
+			}
 			user = await models.user.create({
 				email: email,
 				wallet_address: wallet_address,

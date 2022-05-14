@@ -38,6 +38,15 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 			limit: limit,
 			offset: offset,
 			order: [order],
+			include: [
+				{
+					model: models.user,
+					attributes: ["username"],
+				}]
+		});
+		allAnimal.forEach(element => {
+			element.username = element["user.username"];
+			delete element["user.username"];
 		});
 		res.status(200).send(allAnimal);
 	} catch (e) {
