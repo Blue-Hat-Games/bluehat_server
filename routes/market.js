@@ -7,5 +7,6 @@ router.get("/list", marketCtrl.getAllMarketAnimal);
 router.post("/sell", verifyToken, marketCtrl.sellAnimaltoMarket);
 router.get("/counts", marketCtrl.getMarketAnimalCounts);
 router.get('', marketCtrl.getMarketAnimalDetail);
+router.post("/buy", verifyToken, marketCtrl.buyAnimalfromMarket);
 
 module.exports = router;

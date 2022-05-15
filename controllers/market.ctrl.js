@@ -99,6 +99,9 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
+		if (!animal.nft_hash) {
+			return res.status(400).send(errorMsg.animalNotFound);
+		}
 		let sellAnimal = await models.market.create({
 			animal_possession_id: animal_id,
 			price: price,
@@ -178,3 +181,39 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 			return res.status(500).send(errorMsg.internalServerError);
 		}
 	}
+
+
+exports.buyAnimalfromMarket = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	const buy_animal_id = req.body.buy_animal_id;
+	if(!buy_animal_id){
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	try{
+		const buy_user = await models.user.findOne({ where: { id: req.userId } });
+		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
+		if (buy_user.id == animal.user_id) {
+			result = {
+				"status": "fail",
+				"msg" : "You can't buy your own animal"
+			}
+			return res.status(200).send(result);
+		}
+		if (animal.price <= buy_user.coin) {
+			const result = await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } });
+			const result2 = await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id } });
+			await models.market.destroy({ where: { id: buy_animal_id} });
+			return res.status(200).send(infoMsg.success);
+		}
+		else {
+			result = {
+				"status": "fail",
+				"msg" : "Not Enough Coin"
+			}
+			return res.status(200).send(result)
+		}
+	} catch (e){
+		logger.error(e);
+		res.status(500).send(errorMsg.internalServerError);
+	}
+}
