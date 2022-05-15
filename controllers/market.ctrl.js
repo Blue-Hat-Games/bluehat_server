@@ -46,7 +46,7 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 				},
 			{
 				model:models.animal_possession,
-				attributes : ['animal_id']
+				attributes : ['animal_id', 'name']
 			}],
 			raw: true,
 			attributes: ["id", "price", "view_count", "description", "updatedAt"],
@@ -56,6 +56,8 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 			delete element["user.username"];
 			element.animal_type = element["animal_possession.animal_id"];
 			delete element["animal_possession.animal_id"];
+			element.animal_name = element["animal_possession.name"];
+			delete element["animal_possession.name"];
 		});
 		res.status(200).send(allAnimal);
 	} catch (e) {
