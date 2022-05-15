@@ -113,6 +113,21 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
 	}
+}
 
-
+exports.getMarketAnimalCounts = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	try {
+		let count = await models.market.count();
+		result = {
+			"status": "success",
+			"data" :{
+				"totalCount": count
+			}
+		}
+		res.status(200).send(result);
+	} catch (e) {
+		logger.error(e);
+		res.status(500).send(errorMsg.internalServerError);
+	}
 }

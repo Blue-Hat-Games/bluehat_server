@@ -5,4 +5,6 @@ const { verifyToken } = require('../middlewares/verify');
 
 router.get("", marketCtrl.getAllMarketAnimal);
 router.post("/sell", verifyToken, marketCtrl.sellAnimaltoMarket);
+router.get("/counts", marketCtrl.getMarketAnimalCounts);
+
 module.exports = router;
