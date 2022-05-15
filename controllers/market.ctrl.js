@@ -99,6 +99,9 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
+		if (!animal.nft_hash) {
+			return res.status(400).send(errorMsg.animalNotFound);
+		}
 		let sellAnimal = await models.market.create({
 			animal_possession_id: animal_id,
 			price: price,
