@@ -168,7 +168,8 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 				"animal_name": marketAnimal["animal_possession.name"],
 			}
 		}
-		
+		models.market.increment('view_count', { where: { id: req.query.id } });
+
 		return res.status(200).send(result);
 
 
