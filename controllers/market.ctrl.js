@@ -153,7 +153,7 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 			attributes: ["id", "price", "view_count", "description", "updatedAt"]
 		});
 		if (!marketAnimal) {
-			res.status(200).send({"status" : "fail", "data" : "Not Exists Contents"});
+			return res.status(200).send({"status" : "fail", "data" : "Not Exists Contents"});
 		}	
 		result = {
 			"status": "success",
@@ -168,10 +168,12 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 				"animal_name": marketAnimal["animal_possession.name"],
 			}
 		}
-		res.status(200).send(result);
+		
+		return res.status(200).send(result);
+
 
 		} catch (e) {
 			logger.error(e);
-			res.status(500).send(errorMsg.internalServerError);
+			return res.status(500).send(errorMsg.internalServerError);
 		}
 	}
