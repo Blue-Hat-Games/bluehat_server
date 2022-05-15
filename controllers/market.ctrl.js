@@ -44,10 +44,10 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 					model: models.user,
 					attributes: ["username"],
 				},
-			{
-				model:models.animal_possession,
-				attributes : ['animal_id', 'name']
-			}],
+				{
+					model: models.animal_possession,
+					attributes: ['animal_id', 'name']
+				}],
 			raw: true,
 			attributes: ["id", "price", "view_count", "description", "updatedAt"],
 		});
@@ -90,7 +90,7 @@ exports.tradeAnimal = async function (req, res, next) {
 
 exports.sellAnimaltoMarket = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
-	const {animal_id, price, seller_private_key} = req.body;
+	const { animal_id, price, seller_private_key } = req.body;
 	if (!animal_id || !price || !seller_private_key) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -121,7 +121,7 @@ exports.getMarketAnimalCounts = async function (req, res, next) {
 		let count = await models.market.count();
 		result = {
 			"status": "success",
-			"data" :{
+			"data": {
 				"totalCount": count
 			}
 		}
@@ -131,3 +131,47 @@ exports.getMarketAnimalCounts = async function (req, res, next) {
 		res.status(500).send(errorMsg.internalServerError);
 	}
 }
+
+
+exports.getMarketAnimalDetail = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	if (!req.query.id) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	try {
+		let marketAnimal = await models.market.findOne({
+			where: { id: req.query.id }, include: [
+				{
+					model: models.user,
+					attributes: ["username"],
+				},
+				{
+					model: models.animal_possession,
+					attributes: ['animal_id', 'name']
+				}],
+			raw: true,
+			attributes: ["id", "price", "view_count", "description", "updatedAt"]
+		});
+		if (!marketAnimal) {
+			res.status(200).send({"status" : "fail", "data" : "Not Exists Contents"});
+		}	
+		result = {
+			"status": "success",
+			"data": {
+				"id": marketAnimal.id,
+				"price": marketAnimal.price,
+				"description": marketAnimal.description,
+				"updatedAt": marketAnimal.updatedAt,
+				"view_count": marketAnimal.view_count,
+				"username": marketAnimal["user.username"],
+				"animal_type": marketAnimal["animal_possession.animal_id"],
+				"animal_name": marketAnimal["animal_possession.name"],
+			}
+		}
+		res.status(200).send(result);
+
+		} catch (e) {
+			logger.error(e);
+			res.status(500).send(errorMsg.internalServerError);
+		}
+	}

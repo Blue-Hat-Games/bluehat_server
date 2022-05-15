@@ -3,8 +3,9 @@ var router = express.Router();
 const marketCtrl = require("../controllers/market.ctrl");
 const { verifyToken } = require('../middlewares/verify');
 
-router.get("", marketCtrl.getAllMarketAnimal);
+router.get("/list", marketCtrl.getAllMarketAnimal);
 router.post("/sell", verifyToken, marketCtrl.sellAnimaltoMarket);
 router.get("/counts", marketCtrl.getMarketAnimalCounts);
+router.get('', marketCtrl.getMarketAnimalDetail);
 
 module.exports = router;
