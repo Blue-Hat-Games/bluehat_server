@@ -26,8 +26,10 @@ module.exports = function (sequelize, DataTypes) {
             },
             view_count:{
                 type: DataTypes.INTEGER,
-                allowNull: false,
                 default: 0,
+            },
+            description:{
+                type: DataTypes.STRING,
             }
         },
         {

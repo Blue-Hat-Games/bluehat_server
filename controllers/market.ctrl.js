@@ -20,6 +20,8 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 	orderInfo = {
 		Recently: ["updatedAt", "DESC"],
 		Oldest: ["updatedAt", "ASC"],
+		PriceLow: ["price", "ASC"],
+		PriceHigh: ["price", "DESC"],
 	};
 	if (!req.query.order) {
 		req.query.order = orderInfo["Recently"];
@@ -33,8 +35,7 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 	const order = req.query.order;
 
 	try {
-		let allAnimal = await models.animal_possession.findAll({
-			where: { nft_hash: { [Op.ne]: null } },
+		let allAnimal = await models.market.findAll({
 			limit: limit,
 			offset: offset,
 			order: [order],
@@ -42,11 +43,19 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 				{
 					model: models.user,
 					attributes: ["username"],
-				}]
+				},
+			{
+				model:models.animal_possession,
+				attributes : ['animal_id']
+			}],
+			raw: true,
+			attributes: ["id", "price", "view_count", "description", "updatedAt"],
 		});
 		allAnimal.forEach(element => {
 			element.username = element["user.username"];
 			delete element["user.username"];
+			element.animal_type = element["animal_possession.animal_id"];
+			delete element["animal_possession.animal_id"];
 		});
 		res.status(200).send(allAnimal);
 	} catch (e) {
@@ -76,3 +85,32 @@ exports.tradeAnimal = async function (req, res, next) {
 		res.status(500).send(errorMsg.internalServerError);
 	}
 };
+
+exports.sellAnimaltoMarket = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	const {animal_id, price, seller_private_key} = req.body;
+	if (!animal_id || !price || !seller_private_key) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	try {
+		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
+		if (!animal) {
+			return res.status(400).send(errorMsg.animalNotFound);
+		}
+		let sellAnimal = await models.market.create({
+			animal_possession_id: animal_id,
+			price: price,
+			seller_private_key: seller_private_key,
+			contract_address: "",
+			token_id: "",
+			user_id: req.userId,
+			view_count: 0,
+		});
+		return res.status(200).send(infoMsg.success);
+	} catch (e) {
+		logger.error(e);
+		res.status(500).send(errorMsg.internalServerError);
+	}
+
+
+}
