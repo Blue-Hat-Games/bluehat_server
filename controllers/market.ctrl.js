@@ -18,8 +18,8 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 	const limit = parseInt(req.query.limit);
 
 	orderInfo = {
-		Recently: ["updatedAt", "DESC"],
-		Oldest: ["updatedAt", "ASC"],
+		Recently: ["createdAt", "DESC"],
+		Oldest: ["createdAt", "ASC"],
 		PriceLow: ["price", "ASC"],
 		PriceHigh: ["price", "DESC"],
 	};
@@ -100,7 +100,11 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
 		if (!animal.nft_hash) {
-			return res.status(400).send(errorMsg.animalNotFound);
+			result = {
+				"status": "fail",
+				"msg": "Don't have NFT animal"
+			}
+			return res.status(400).send(result);
 		}
 		let sellAnimal = await models.market.create({
 			animal_possession_id: animal_id,
