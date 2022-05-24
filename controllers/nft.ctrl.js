@@ -47,7 +47,7 @@ exports.mergeAnimal = async function (req, res, next) {
 			})
 			.then(console.log("merge success"));
 
-		return res.status(200).send(new_animals);
+		return res.status(201).send(new_animals);
 
 	} catch (e) {
 		console.log(e);
@@ -90,7 +90,7 @@ exports.getUserNftAnimal = async function (req, res, next) {
 
 	try {
 		let allAnimal = await models.animal_possession.findAll({
-			where : { user_id: req.userId, nft_hash : {[Op.ne] : null} },
+			where: { user_id: req.userId, nft_hash: { [Op.ne]: null } },
 			limit: limit,
 			offset: offset,
 			order: [order],
@@ -108,7 +108,7 @@ exports.getUserNftAnimal = async function (req, res, next) {
 exports.getUserNftAnimalCount = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
 	try {
-		let count = await models.animal_possession.count({ where: { user_id: req.userId, nft_hash : { [Op.ne] : null} } });
+		let count = await models.animal_possession.count({ where: { user_id: req.userId, nft_hash: { [Op.ne]: null } } });
 		result = {
 			"status": "success",
 			"data": {
@@ -118,7 +118,7 @@ exports.getUserNftAnimalCount = async function (req, res, next) {
 		return res.status(200).send(result);
 	} catch (e) {
 		logger.error(e);
-		return  res.status(500).send(errorMsg.internalServerError);
+		return res.status(500).send(errorMsg.internalServerError);
 	}
 }
 
@@ -131,15 +131,15 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		let possessionInfo = await models.animal_possession.findOne({
 			where: { id: req.params.id },
 			attributes: ["id", "nft_hash", "color", "name", "tier", "animal_id", "head_item_id", "body_item_id", "foot_item_id",
-			"foot_item_id", "pattern_id", "createdAt", "updatedAt"]
+				"foot_item_id", "pattern_id", "createdAt", "updatedAt"]
 		});
 		if (!possessionInfo) {
-			return res.status(400).send({"status" : "fail", "msg": "No animal existed"});
+			return res.status(400).send({ "status": "fail", "msg": "No animal existed" });
 		}
 		return res.status(200).send(possessionInfo);
-		} catch (e) {
-			logger.error(e);
-			return res.status(500).send(errorMsg.internalServerError);
-		}
-	
+	} catch (e) {
+		logger.error(e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+
 }
