@@ -2,6 +2,7 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
+const errorMsg = require("./message/errorMsg");
 
 var indexRouter = require("./routes");
 var usersRouter = require("./routes/users");
@@ -45,7 +46,12 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send("Internal Server Error");
+  if (err.status === 404) {
+    res.send(errorMsg.pageNotFound);
+  }
+  else{
+  res.send(errorMsg.internalServerError);
+  }
 });
 
 module.exports = app;

@@ -35,7 +35,7 @@ exports.getUserAnimal = async function (req, res, next) {
 					attributes: ["filename"],
 				},
 			],
-			attributes: ["name", "tier", "color"],
+			attributes: ["name", "tier", "color", "id"],
 			raw: true,
 		});
 		userAnimal.forEach(element => {

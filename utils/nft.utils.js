@@ -66,3 +66,7 @@ exports.getNft = async function (title, symbol, toAddr) {
   }
   return mintResult
 };
+
+exports.tradeNft = async function (){
+
+};

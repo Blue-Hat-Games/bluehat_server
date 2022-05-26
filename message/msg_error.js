@@ -25,3 +25,7 @@ exports.notEnoughRequirement = {
 exports.alreadyDeleted = {
     msg: "already deleted"
 }
+
+exports.pageNotFound = {
+    msg: "page not found"
+}
