@@ -7,7 +7,7 @@ const { Op } = require("sequelize");
 const logger = require("../config/logger");
 
 exports.mergeAnimal = async function (req, res, next) {
-	const { animalId1, animalId2, color } = req.body;
+	const { animalId1, animalId2, color, tokenURL } = req.body;
 	if (animalId1 === undefined || animalId2 === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -35,7 +35,7 @@ exports.mergeAnimal = async function (req, res, next) {
 			pattern_id: animals[randomVal()].pattern_id,
 		};
 
-		let nftMintResult = await nftUtils.getNft(title = 'mergeAnimal', symbol = verifyUtils.encryptValtest(JSON.stringify(new_animal)), toAddr = user_wallet.wallet_address);
+		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat',tokenURL, toAddr = user_wallet.wallet_address);
 		console.log(nftMintResult);
 		new_animal['nft_hash'] = nftMintResult.transactionHash;
 
@@ -142,4 +142,13 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 			return res.status(500).send(errorMsg.internalServerError);
 		}
 	
+}
+
+exports.getMetaData = async function (req, res, next) {
+	logger.info(`${req.method} ${req.url}`);
+	if (!req.params.id) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	let result = {"image":"https://themetakongz.com/kongz/images/3091.png","description":"The Kongz are unique and randomly generated 3D NFT PFP. Not only that, Kongz can make coins and can breed baby Kongz. Welcome to join us the Kongz society.","name":"Kongz#3091","attributes":[{"display_type":"date","trait_type":"Birthday","value":"1639229527"},{"trait_type":"Feather","value":"None"},{"trait_type":"Lips","value":"Bit"},{"trait_type":"Necklace","value":"Ribbon_Y"},{"trait_type":"Glasses","value":"None"},{"trait_type":"Accessories2","value":"None"},{"trait_type":"Accessories1","value":"None"},{"trait_type":"Cap","value":"Cap_GR"},{"trait_type":"Clothes","value":"Training_blue"},{"trait_type":"Face","value":"Open mouth"},{"trait_type":"Body","value":"Leopard"},{"trait_type":"Wing","value":"Green bear"},{"trait_type":"Background","value":"Yellow"}]}
+	return res.status(200).send(result);
 }
