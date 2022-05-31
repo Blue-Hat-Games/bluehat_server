@@ -15,7 +15,7 @@ var newID = function () {
   return Math.random().toString(36).substr(2, 16);
 };
 
-exports.getNft = async function (title, symbol, toAddr) {
+exports.getNft = async function (title, symbol,tokenURI, toAddr) {
   const keyring = caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
 
   if (!caver.wallet.getKeyring(keyring.address)) {
@@ -32,23 +32,15 @@ exports.getNft = async function (title, symbol, toAddr) {
     keyring.address
   );
 
-  console.log(kip17.options.address);
-
   contractAddr = kip17.options.address;
   kip17 = new caver.kct.kip17(contractAddr);
   minted = false;
   while (true) {
     randomID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    console.log("randomID", randomID);
     try {
       owner = await kip17.ownerOf(randomID);
     } catch (e) {
       console.log("we can mint");
-
-      tokenURI = JSON.stringify({
-        sellerID: 0,
-        productID: newID(),
-      });
 
       mintResult = await kip17.mintWithTokenURI(
         toAddr,
@@ -58,9 +50,7 @@ exports.getNft = async function (title, symbol, toAddr) {
       );
 
       minted = true;
-      console.log("mintResult", mintResult);
     }
-
     if (minted) {
       break;
     }
