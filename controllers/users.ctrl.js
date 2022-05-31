@@ -83,9 +83,15 @@ exports.getUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
 	const userId = req.userId;
 	try {
-		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "wallet_address", "email"] });
+		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "wallet_address", "email", "createdAt"] });
+		const user_sell = await models.market.count({ where: { user_id: userId } });
 		if (user) {
-			return res.status(200).send(user);
+			let user_info = JSON.parse(JSON.stringify(user));
+			user_info.createdAt = user.createdAt.toLocaleDateString();
+			if(user_sell){
+				user_info['sellCount'] = user_sell;
+			}
+			return res.status(200).send(user_info);
 		} else {
 			return res.status(404).send(errorMsg.notFound);
 		}
@@ -99,8 +105,6 @@ exports.editUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
 	const userId = req.userId;
 	const { username, email } = req.body;
-	logger.info('userId: ' + userId);
-	logger.info('username: ' + username);
 	try {
 		if (username !== undefined && userId !== undefined) {
 			await models.user.update({ username: username }, { where: { id: userId } });

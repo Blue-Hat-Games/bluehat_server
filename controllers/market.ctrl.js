@@ -3,6 +3,7 @@ const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
 const { Op } = require("sequelize");
+const nftUtils = require("../utils/nft.utils");
 
 exports.getAllMarketAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -220,4 +221,15 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
 	}
+}
+
+exports.testNftTrade = async function (req, res, next) {
+	try{
+		logger.info(`${req.method} ${req.url}`);
+		const nftResult = await nftUtils.tradeNft(req.body.customerPrivateKey, req.body.contractAddr, req.body.tokenId, req.body.receiverAddr)
+		res.status(200).send(nftResult)
+	} catch{
+		res.status(500).send(errorMsg.internalServerError);
+	}
+
 }
