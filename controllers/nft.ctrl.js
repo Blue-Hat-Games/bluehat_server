@@ -35,7 +35,7 @@ exports.mergeAnimal = async function (req, res, next) {
 			pattern_id: animals[randomVal()].pattern_id,
 		};
 
-		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat',tokenURL, toAddr = user_wallet.wallet_address);
+		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
 		console.log(nftMintResult);
 		new_animal['nft_hash'] = nftMintResult.transactionHash;
 
@@ -149,6 +149,10 @@ exports.getMetaData = async function (req, res, next) {
 	if (!req.params.id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
-	let result = {"image":"https://themetakongz.com/kongz/images/3091.png","description":"The Kongz are unique and randomly generated 3D NFT PFP. Not only that, Kongz can make coins and can breed baby Kongz. Welcome to join us the Kongz society.","name":"Kongz#3091","attributes":[{"display_type":"date","trait_type":"Birthday","value":"1639229527"},{"trait_type":"Feather","value":"None"},{"trait_type":"Lips","value":"Bit"},{"trait_type":"Necklace","value":"Ribbon_Y"},{"trait_type":"Glasses","value":"None"},{"trait_type":"Accessories2","value":"None"},{"trait_type":"Accessories1","value":"None"},{"trait_type":"Cap","value":"Cap_GR"},{"trait_type":"Clothes","value":"Training_blue"},{"trait_type":"Face","value":"Open mouth"},{"trait_type":"Body","value":"Leopard"},{"trait_type":"Wing","value":"Green bear"},{"trait_type":"Background","value":"Yellow"}]}
+
+	let result = { "image": "https://bluehatgames.s3.ap-northeast-2.amazonaws.com/dtree.png", 
+	"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.", 
+	"name": "Bluehat Animal #3091",
+	"attributes": [] }
 	return res.status(200).send(result);
 }
