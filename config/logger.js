@@ -5,60 +5,61 @@ const appRoot = require("app-root-path");
 const logDir = `${appRoot}/logs`;
 
 const {
-    combine,
-    timestamp,
-    label,
-    printf
+	combine,
+	timestamp,
+	label,
+	printf
 } = winston.format;
 
 const logFormat = printf(({
-    level,
-    message,
-    label,
-    timestamp
+	level,
+	message,
+	label,
+	timestamp
 }) => {
-    return `${timestamp} [${label}] ${level}: ${message}`;
+	return `${timestamp} [${label}] ${level}: ${message}`;
 })
 
 const logger = winston.createLogger({
-    format: combine(
-        label({
-            label: 'Bluehat Games'
-        }),
-        timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
-        }),
-        logFormat
-    ),
-    transports: [
-        new winstonDaily({
-            level: 'info',
-            datePattern: 'YYYY-MM-DD',
-            dirname: logDir,
-            filename: `%DATE%.log`,
-            maxFiles: 30,
-            zippedArchive: true,
-        }),
+	format: combine(
+		label({
+			label: 'Bluehat Games'
+		}),
+		timestamp({
+			format: 'YYYY-MM-DD HH:mm:ss',
+			tz: 'Asia/Seoul'
+		}),
+		logFormat
+	),
+	transports: [
+		new winstonDaily({
+			level: 'info',
+			datePattern: 'YYYY-MM-DD',
+			dirname: logDir,
+			filename: `%DATE%.log`,
+			maxFiles: 30,
+			zippedArchive: true,
+		}),
 
-        new winstonDaily({
-            level: 'error',
-            datePattern: 'YYYY-MM-DD',
-            dirname: logDir,
-            filename: `%DATE%.error.log`,
-            maxFiles: 30,
-            zippedArchive: true,
-        })
-    ],
-    exceptionHandlers: [
-        new winstonDaily({
-            level: 'error',
-            datePattern: 'YYYY-MM-DD',
-            dirname: logDir,
-            filename: `%DATE%.exception.log`,
-            maxFiles: 30,
-            zippedArchive: true,
-        })
-    ]
+		new winstonDaily({
+			level: 'error',
+			datePattern: 'YYYY-MM-DD',
+			dirname: logDir,
+			filename: `%DATE%.error.log`,
+			maxFiles: 30,
+			zippedArchive: true,
+		})
+	],
+	exceptionHandlers: [
+		new winstonDaily({
+			level: 'error',
+			datePattern: 'YYYY-MM-DD',
+			dirname: logDir,
+			filename: `%DATE%.exception.log`,
+			maxFiles: 30,
+			zippedArchive: true,
+		})
+	]
 });
 
 // if (process.env.NODE_ENV !== 'production') {

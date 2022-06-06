@@ -2,15 +2,14 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
-
-let authCache = {};
-global.authCache = authCache;
+const errorMsg = require("./message/msg_error");
 
 var indexRouter = require("./routes");
 var usersRouter = require("./routes/users");
 var nftRouter = require("./routes/nft");
 var authRouter = require("./routes/auth");
 var animalRouter = require("./routes/animal");
+var marketRouter = require("./routes/market");
 var app = express();
 
 // Default Setting
@@ -32,6 +31,7 @@ app.use("/users", usersRouter);
 app.use("/nft", nftRouter);
 app.use("/auth", authRouter);
 app.use('/animal', animalRouter);
+app.use('/market', marketRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -46,7 +46,12 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send("Internal Server Error");
+  if (err.status === 404) {
+    res.send(errorMsg.pageNotFound);
+  }
+  else{
+  res.send(errorMsg.internalServerError);
+  }
 });
 
 module.exports = app;

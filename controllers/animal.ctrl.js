@@ -35,10 +35,22 @@ exports.getUserAnimal = async function (req, res, next) {
 					attributes: ["filename"],
 				},
 			],
-			attributes: ["name", "tier", "color"],
+			attributes: ["name", "tier", "color", "id"],
 			raw: true,
 		});
-		return res.status(200).send(userAnimal);
+		userAnimal.forEach(element => {
+			element.animalType = element["animal.type"];
+			element.headItem = element["head_item.filename"];
+			element.bodyItem = element["body_item.filename"];
+			element.footItem = element["foot_item.filename"];
+			element.pattern = element["pattern.filename"];
+			delete element["animal.type"];
+			delete element["head_item.filename"];
+			delete element["body_item.filename"];
+			delete element["foot_item.filename"];
+			delete element["pattern.filename"];
+		});
+		return res.status(200).send({"data" : userAnimal});
 	} catch (e) {
 		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
@@ -56,7 +68,7 @@ exports.getNewAnimal = async function (req, res, next) {
 
 		await models.animal_possession
 			.create({
-				nft_hash: "0",
+				nft_hash: null,
 				color: null,
 				name: "testAnimal",
 				tier: 1,

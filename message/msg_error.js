@@ -21,3 +21,11 @@ exports.needParameter = {
 exports.notEnoughRequirement = {
     msg: "not enough request requirement, please check api documents"
 }
+
+exports.alreadyDeleted = {
+    msg: "already deleted"
+}
+
+exports.pageNotFound = {
+    msg: "page not found"
+}
