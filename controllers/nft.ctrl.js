@@ -149,10 +149,24 @@ exports.getMetaData = async function (req, res, next) {
 	if (!req.params.id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
+	try {
+		let token_id = req.params.id.replace('.json', '');
+		logger.info(token_id);
+		let nft_info = await models.transaction.findOne({ where: { token_id: token_id } })
+		if (nft_info == null) {
+			return res.status(400).send({ "msg": "Invalid" });
+		}
+		let json_result = {
+			"image": "https://ipfs.io/ipfs/" + nft_info['ipfs_hash'],
+			"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.",
+			"name": "Bluehat Animal #" + token_id,
+			"attributes": []
+		}
 
-	let result = { "image": "https://bluehatgames.s3.ap-northeast-2.amazonaws.com/dtree.png", 
-	"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.", 
-	"name": "Bluehat Animal #3091",
-	"attributes": [] }
-	return res.status(200).send(result);
+		return res.status(200).send(json_result);
+	} catch (e) {
+		logger.error(e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+
 }
