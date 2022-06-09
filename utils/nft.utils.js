@@ -3,7 +3,7 @@ var express = require("express");
 var router = express.Router();
 
 // Default Acess Key Setting
-const config = require("../src/config");
+const config = require("./config");
 const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 const authorization = config.authorization;
