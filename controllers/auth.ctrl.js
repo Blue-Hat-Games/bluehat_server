@@ -28,8 +28,9 @@ exports.verifyAuthEmail = function (req, res, next) {
 
 exports.verifyAuthEmailKey = function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
+	let userEmail = ''
 	try {
-		const userEmail = authUtils.decryptEmail(req.query.authKey);
+		userEmail = authUtils.decryptEmail(req.query.authKey);
 		const validAuthkey = authUtils.validAuthUser(userEmail);
 		if (validAuthkey) {
 			if (authUtils.setAuthUser(userEmail, true)) {
@@ -45,6 +46,12 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 	} finally {
 		// application Deeplink 이동
-		res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
+		if (userEmail) {
+			res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
+		}
+		else {
+			res.redirect(301, `http://bluehat.games`);
+		}
+		
 	}
 };
