@@ -45,6 +45,6 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 	} finally {
 		// application Deeplink 이동
-		res.redirect(301, `http://bluehat.games`);
+		res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
 	}
 };
