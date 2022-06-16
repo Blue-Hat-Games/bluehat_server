@@ -2,7 +2,6 @@ const redisClient = require("../utils/redis");
 
 exports.getAuthUser = async function (email) {
   if ((await redisClient.exists(email)) == 1) {
-    console.log("in");
     const data = await redisClient.get(email, function (err, reply) {
       if (err) {
         console.log(err);
