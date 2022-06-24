@@ -24,6 +24,10 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.TINYINT,
                 allowNull: false,
             },
+            ipfs_addr : {
+                type: DataTypes.STRING,
+                allowNull: true,
+            }
         },
         {
             sequelize,
