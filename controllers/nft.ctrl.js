@@ -182,8 +182,25 @@ exports.uploadIpfs = async function (req, res) {
 			  logger.info(err);
 			  return res.status(500).send(err);
 			}
-			logger.info(file);
-			return res.status(200).send(file);
+			json_result = JSON.stringify({
+				"image": "https://ipfs.io/ipfs/" + file[0].hash,
+				"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.",
+				"name": "Bluehat Animal",
+				"attributes": []
+			});
+
+			logger.info(json_result);
+			ipfs.files.add(
+				Buffer.from(json_result),function(err, json_file)
+				{
+					if (err) {
+						logger.info(err);
+						return res.status(500).send(err);
+					}
+					logger.info(file);
+					return res.status(200).send({"link":"https://ipfs.io/ipfs/" +json_file[0].hash});
+				}
+			)
 		  })
 		
 	} catch (e) {
