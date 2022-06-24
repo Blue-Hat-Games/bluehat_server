@@ -5,6 +5,8 @@ const infoMsg = require("../message/msg_info");
 const verifyUtils = require("../utils/verify");
 const { Op } = require("sequelize");
 const logger = require("../config/logger");
+const ipfsAPI = require('ipfs-api');
+const ipfs = ipfsAPI('ipfs-api', '5001', {protocol: 'http'})
 
 exports.mergeAnimal = async function (req, res, next) {
 	const { animalId1, animalId2, color, tokenURL } = req.body;
@@ -169,4 +171,23 @@ exports.getMetaData = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 
+}
+
+exports.uploadIpfs = async function (req, res) {
+	logger.info(`${req.method} ${req.url}`);
+	try {
+		logger.info("upload ipfs");
+		ipfs.files.add(req.file.buffer, function (err, file) {
+			if (err) {
+			  logger.info(err);
+			  return res.status(500).send(err);
+			}
+			logger.info(file);
+			return res.status(200).send(file);
+		  })
+		
+	} catch (e) {
+		logger.error(e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
 }
