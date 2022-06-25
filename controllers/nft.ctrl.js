@@ -20,7 +20,6 @@ exports.mergeAnimal = async function (req, res, next) {
 		});
 
 		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
-		console.log(user_wallet.wallet_address);
 
 		function randomVal() {
 			return Math.round(Math.random());
@@ -38,7 +37,6 @@ exports.mergeAnimal = async function (req, res, next) {
 		};
 
 		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
-		console.log(nftMintResult);
 		new_animal['nft_hash'] = nftMintResult.transactionHash;
 
 		let new_animals = await models.animal_possession.create(new_animal);
@@ -47,16 +45,14 @@ exports.mergeAnimal = async function (req, res, next) {
 			.destroy({
 				where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 			})
-			.then(console.log("merge success"));
+			.then(logger.info("merge success"));
 
 		return res.status(201).send(new_animals);
 
 	} catch (e) {
-		console.log(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
-
 
 exports.getUserNftAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -105,7 +101,7 @@ exports.getUserNftAnimal = async function (req, res, next) {
 	}
 
 
-}
+};
 
 exports.getUserNftAnimalCount = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -122,7 +118,7 @@ exports.getUserNftAnimalCount = async function (req, res, next) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getUserNftAnimalById = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -144,7 +140,7 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 
-}
+};
 
 exports.getMetaData = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -171,7 +167,7 @@ exports.getMetaData = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 
-}
+};
 
 exports.uploadIpfs = async function (req, res) {
 	logger.info(`${req.method} ${req.url}`);
@@ -206,8 +202,7 @@ exports.uploadIpfs = async function (req, res) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
-
+};
 
 exports.makeNFT = async function (req, res) {
 	/*
@@ -226,4 +221,4 @@ exports.makeNFT = async function (req, res) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};

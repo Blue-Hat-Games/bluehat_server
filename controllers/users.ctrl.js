@@ -35,7 +35,6 @@ exports.addUser = async (req, res) => {
 				login_type: "email",
 				coin: 0,
 			}).then(user => {
-				console.log(user);
 				register_result = {
 					msg: 'Register Success',
 					access_token: makeToken(user.id),
@@ -44,7 +43,6 @@ exports.addUser = async (req, res) => {
 			});
 		}
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
 			return res.status(400).send(errorMsg.duplicateInfo);
@@ -73,11 +71,10 @@ exports.delUser = async (req, res) => {
 		}
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -99,7 +96,7 @@ exports.getUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.editUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -116,7 +113,7 @@ exports.editUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.updateUserCoin = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -135,4 +132,4 @@ exports.updateUserCoin = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};

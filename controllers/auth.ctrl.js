@@ -21,8 +21,8 @@ exports.verifyAuthEmail = function (req, res, next) {
 			res.status(400).send(errorMsg.fail);
 		}
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
 
@@ -34,18 +34,16 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 		const validAuthkey = authUtils.validAuthUser(userEmail);
 		if (validAuthkey) {
 			if (authUtils.setAuthUser(userEmail, true)) {
-				console.log(`${userEmail} is verified`);
+				logger.info(`${userEmail} is verified`);
 			} else {
-				console.log(`${userEmail} is not verified`);
+				logger.info(`${userEmail} is not verified`);
 			}
 		} else {
-			console.log(`${userEmail} is not verified`);
+			logger.info(`${userEmail} is not verified`);
 		}
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 	} finally {
-		// application Deeplink 이동
 		if (userEmail) {
 			res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
 		}
