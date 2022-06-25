@@ -15,6 +15,9 @@ services:
       - NODE_ENV=development
     stdin_open: true
     tty: true
+    depends_on:
+      - redis
+      - ipfs-api
   redis:
       image: redis
       command: redis-server --port 6379
@@ -38,3 +41,14 @@ services:
       - "8080:8080"
       - "8081:8081"
       - "5001:5001"
+  ngnix:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    volumes:
+      - "./ngnix/ngnix.conf:/etc/nginx/ngnix.conf"
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
