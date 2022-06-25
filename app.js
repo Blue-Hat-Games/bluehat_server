@@ -30,7 +30,7 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // index page status setting
-app.use("/", function (req, res, next) {
+app.use("/index", function (req, res, next) {
   res.status(200).send(infoMsg.success);
 });
 
