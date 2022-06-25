@@ -4,12 +4,10 @@ const decryptVal = require("../utils/verify").decryptVal;
 
 exports.verifyToken =(req, res, next) => {
 	try {
-        console.log(req.headers.authorization)
 		let decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET, {
 			issuer: "http://bluehat.games",
 		});
         logger.info('decoded: ' + JSON.stringify(decoded));
-        console.log(decoded)
         req.userId = decryptVal(decoded.userId);
         logger.info('req.userId: ' + req.userId);
 		return next();

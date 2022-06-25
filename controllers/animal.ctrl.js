@@ -52,7 +52,6 @@ exports.getUserAnimal = async function (req, res, next) {
 		});
 		return res.status(200).send({"data" : userAnimal});
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
@@ -80,7 +79,7 @@ exports.getNewAnimal = async function (req, res, next) {
 				pattern_id: 1,
 			})
 			.then((user) => {
-				console.log(user);
+				logger.info(user);
 			});
 
 		return res.status(201).send(animal);
@@ -100,7 +99,7 @@ exports.changeAnimalColor = async function (req, res, next) {
 		await models.animal_possession.update({ color: color }, { where: { id: animalId } });
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
-		console.log(e);
+		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };

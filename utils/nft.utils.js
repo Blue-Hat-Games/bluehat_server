@@ -43,8 +43,6 @@ exports.getNft = async function (title, symbol,tokenURI, toAddr) {
     try {
       owner = await kip17.ownerOf(randomID);
     } catch (e) {
-      console.log("we can mint");
-
       mintResult = await kip17.mintWithTokenURI(
         toAddr,
         randomID,
@@ -116,7 +114,6 @@ exports.uploadIpfsMeta = async function (imgHash) {
     "name": "Bluehat Animal",
     "attributes": []
   });
-  console.log(json_result)
   const json_file_hash = await addFile(Buffer.from(json_result));
   return "https://ipfs.io/ipfs/" +json_file_hash[0].hash;
 }

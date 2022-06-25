@@ -58,9 +58,7 @@ exports.sendVerifyEmail = function (userMailAdress, authKey) {
   };
 
   mg.messages().send(data, function (error, body) {
-    console.log(body);
     if (error) {
-      console.log(error);
       return false;
     }
   });
@@ -71,10 +69,8 @@ exports.sendVerifyEmail = function (userMailAdress, authKey) {
 exports.setAuthUser = async function (email, value, exp=60*60) {
   redisClient.set(email, value, {EX: exp},function (err, reply) {
     if (err) {
-      console.log(err);
       return false;
     }
-    console.log(reply);
     return true
   });
 }
