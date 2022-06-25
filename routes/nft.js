@@ -1,5 +1,4 @@
 var express = require("express");
-const { route } = require(".");
 var router = express.Router();
 const nftCtrl = require("../controllers/nft.ctrl");
 const { verifyToken } = require('../middlewares/verify');

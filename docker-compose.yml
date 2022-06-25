@@ -43,8 +43,6 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    volumes:
-      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
     restart: always
     ports:
       - "80:80"
