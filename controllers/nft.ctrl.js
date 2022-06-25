@@ -182,9 +182,45 @@ exports.uploadIpfs = async function (req, res) {
 			  logger.info(err);
 			  return res.status(500).send(err);
 			}
-			logger.info(file);
-			return res.status(200).send(file);
+			json_result = JSON.stringify({
+				"image": "https://ipfs.io/ipfs/" + file[0].hash,
+				"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.",
+				"name": "Bluehat Animal",
+				"attributes": []
+			});
+
+			ipfs.files.add(
+				Buffer.from(json_result),function(err, json_file)
+				{
+					if (err) {
+						logger.info(err);
+						return res.status(500).send(err);
+					}
+					logger.info(file);
+					return res.status(200).send({"link":"https://ipfs.io/ipfs/" +json_file[0].hash});
+				}
+			)
 		  })
+		
+	} catch (e) {
+		logger.error(e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+}
+
+
+exports.makeNFT = async function (req, res) {
+	/*
+		1. upload to IPFS
+		2. create NFT
+		3. save to Database
+	*/
+	logger.info(`${req.method} ${req.url}`);
+	try {
+		let imgHash = await nftUtils.uploadIpfsImg(req.file);
+		let tokenURL = await nftUtils.uploadIpfsMeta(imgHash);
+		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
+		return res.status(200).send(nftMintResult);
 		
 	} catch (e) {
 		logger.error(e);
