@@ -189,7 +189,6 @@ exports.uploadIpfs = async function (req, res) {
 				"attributes": []
 			});
 
-			logger.info(json_result);
 			ipfs.files.add(
 				Buffer.from(json_result),function(err, json_file)
 				{
@@ -202,6 +201,26 @@ exports.uploadIpfs = async function (req, res) {
 				}
 			)
 		  })
+		
+	} catch (e) {
+		logger.error(e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+}
+
+
+exports.makeNFT = async function (req, res) {
+	/*
+		1. upload to IPFS
+		2. create NFT
+		3. save to Database
+	*/
+	logger.info(`${req.method} ${req.url}`);
+	try {
+		let imgHash = await nftUtils.uploadIpfsImg(req.file);
+		let tokenURL = await nftUtils.uploadIpfsMeta(imgHash);
+		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
+		return res.status(200).send(nftMintResult);
 		
 	} catch (e) {
 		logger.error(e);
