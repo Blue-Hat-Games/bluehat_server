@@ -74,7 +74,7 @@ exports.delUser = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -96,7 +96,7 @@ exports.getUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.editUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -113,7 +113,7 @@ exports.editUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.updateUserCoin = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -132,4 +132,4 @@ exports.updateUserCoin = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};

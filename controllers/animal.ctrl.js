@@ -3,7 +3,6 @@ const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
 
-
 exports.getUserAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
 	if (req.userId)
@@ -107,6 +106,3 @@ exports.changeAnimalColor = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
-
-
-

@@ -20,7 +20,7 @@ exports.mergeAnimal = async function (req, res, next) {
 		});
 
 		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
-		
+
 		function randomVal() {
 			return Math.round(Math.random());
 		}
@@ -53,7 +53,6 @@ exports.mergeAnimal = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
-
 
 exports.getUserNftAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -102,7 +101,7 @@ exports.getUserNftAnimal = async function (req, res, next) {
 	}
 
 
-}
+};
 
 exports.getUserNftAnimalCount = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -119,7 +118,7 @@ exports.getUserNftAnimalCount = async function (req, res, next) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getUserNftAnimalById = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -141,7 +140,7 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 
-}
+};
 
 exports.getMetaData = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -168,7 +167,7 @@ exports.getMetaData = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 
-}
+};
 
 exports.uploadIpfs = async function (req, res) {
 	logger.info(`${req.method} ${req.url}`);
@@ -203,8 +202,7 @@ exports.uploadIpfs = async function (req, res) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
-
+};
 
 exports.makeNFT = async function (req, res) {
 	/*
@@ -223,4 +221,4 @@ exports.makeNFT = async function (req, res) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};
