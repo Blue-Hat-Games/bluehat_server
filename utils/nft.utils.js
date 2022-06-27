@@ -1,15 +1,18 @@
 const fs = require("fs");
 var express = require("express");
 var router = express.Router();
+const ipfsAPI = require('ipfs-api');
+const ipfs = ipfsAPI('ipfs-api', '5001', {protocol: 'http'})
 
 // Default Acess Key Setting
-const config = require("../src/config");
+const config = require("./config");
 const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 const authorization = config.authorization;
 const sellerPrivateKey = config.sellerPrivateKey;
 const caver = config.caver;
 const logger = require("../config/logger");
+const { promisify } = require("util");
 
 var newID = function () {
   return Math.random().toString(36).substr(2, 16);
@@ -40,8 +43,6 @@ exports.getNft = async function (title, symbol,tokenURI, toAddr) {
     try {
       owner = await kip17.ownerOf(randomID);
     } catch (e) {
-      console.log("we can mint");
-
       mintResult = await kip17.mintWithTokenURI(
         toAddr,
         randomID,
@@ -98,3 +99,21 @@ exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, re
   }
 
 };
+
+exports.uploadIpfsImg = async function (img) {
+  const addFile = promisify(ipfs.files.add);
+  const filehash = await addFile(img.buffer);
+  return filehash[0].hash;
+}
+
+exports.uploadIpfsMeta = async function (imgHash) {
+  const addFile = promisify(ipfs.files.add);
+  json_result = JSON.stringify({
+    "image": "https://ipfs.io/ipfs/" + imgHash,
+    "description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.",
+    "name": "Bluehat Animal",
+    "attributes": []
+  });
+  const json_file_hash = await addFile(Buffer.from(json_result));
+  return "https://ipfs.io/ipfs/" +json_file_hash[0].hash;
+}
