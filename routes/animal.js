@@ -3,9 +3,9 @@ var router = express.Router();
 const animalCtrl = require('../controllers/animal.ctrl');
 const { verifyToken } = require('../middlewares/verify');
 
-router.get("", verifyToken, animalCtrl.getUserAnimal);
-router.post("", verifyToken,animalCtrl.getNewAnimal);
-router.post("/change-color",verifyToken, animalCtrl.changeAnimalColor);
+router.get("/get-user-animal", verifyToken, animalCtrl.getUserAnimal);
+router.post("/make-animal", verifyToken, animalCtrl.makeNewAnimal);
+router.post("/change-color", verifyToken, animalCtrl.changeAnimalColor);
 
 
 module.exports = router;
