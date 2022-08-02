@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  backend:
+    container_name: bluehat-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
+  redis:
+      image: redis
+      command: redis-server --port 6379
+      container_name: redis
+      hostname: redis
+      labels:
+        - "name=redis"
+        - "mode=standalone"
+      ports:
+        - "6379:6379"
+  ipfs:
+    image: ipfs/go-ipfs:latest
+    environment:
+      - IPFS_PROFILE=server
+      - IPFS_PATH=/ipfsdata
+    volumes:
+      - ./data/ipfs:/ipfsdata
+    ports:
+      - "4001:4001"
+      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8081:8081"
+      - "127.0.0.1:5001:5001"

@@ -141,5 +141,4 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-
 }
