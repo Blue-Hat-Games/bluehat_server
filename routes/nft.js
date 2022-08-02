@@ -5,12 +5,12 @@ const { verifyToken } = require('../middlewares/verify');
 const { uploadFile } = require('../middlewares/file');
 
 
-router.post("", verifyToken,nftCtrl.mergeAnimal);
+router.post("", verifyToken, nftCtrl.mergeAnimal);
 router.get("/user/animal", verifyToken, nftCtrl.getUserNftAnimal);
 router.get("/user/animal/count", verifyToken, nftCtrl.getUserNftAnimalCount);
 router.get("/user/animal/:id", verifyToken, nftCtrl.getUserNftAnimalById);
 router.get("/metadata/:id", nftCtrl.getMetaData);
 router.post("/upload-ipfs", uploadFile, nftCtrl.uploadIpfs)
-router.post("/test-nft", express.urlencoded({ extended: false }), express.json(),uploadFile, nftCtrl.makeNFT)
+router.post("/mint", express.urlencoded({ extended: false }), express.json(), uploadFile, nftCtrl.makeNFT)
 
 module.exports = router;
