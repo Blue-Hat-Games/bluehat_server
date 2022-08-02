@@ -33,3 +33,7 @@ exports.pageNotFound = {
 exports.userNotFound = {
     msg: "user not found"
 }
+
+exports.notEnoughCoin = {
+    msg: "not enough coin"
+}
