@@ -35,7 +35,6 @@ exports.addUser = async (req, res) => {
 				login_type: "email",
 				coin: 0,
 			}).then(user => {
-				console.log(user);
 				register_result = {
 					msg: 'Register Success',
 					access_token: makeToken(user.id),
@@ -44,7 +43,6 @@ exports.addUser = async (req, res) => {
 			});
 		}
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
 			return res.status(400).send(errorMsg.duplicateInfo);
@@ -63,21 +61,20 @@ exports.delUser = async (req, res) => {
 		return res.status(400).send(errorMsg.needParameter);
 	}
 	try {
-		const user = await models.user.findOne({ where: { email : email }, attributes:["email", 'deleted'] })
+		const user = await models.user.findOne({ where: { email: email }, attributes: ["email", 'deleted'] })
 		if (user) {
-			if(user.deleted){
+			if (user.deleted) {
 				return res.status(409).send(errorMsg.alreadyDeleted);
 			}
 			delEmail = 'deleted.' + email;
-			await models.user.update({ deleted: true, email : delEmail }, { where: { email: email } });
+			await models.user.update({ deleted: true, email: delEmail }, { where: { email: email } });
 		}
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
-		console.log(e);
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -88,7 +85,7 @@ exports.getUserInfo = async (req, res) => {
 		if (user) {
 			let user_info = JSON.parse(JSON.stringify(user));
 			user_info.createdAt = user.createdAt.toLocaleDateString();
-			if(user_sell){
+			if (user_sell) {
 				user_info['sellCount'] = user_sell;
 			}
 			return res.status(200).send(user_info);
@@ -99,7 +96,7 @@ exports.getUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.editUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.url}`);
@@ -116,4 +113,23 @@ exports.editUserInfo = async (req, res) => {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
-}
+};
+
+exports.updateUserCoin = async (req, res) => {
+	logger.info(`${req.method} ${req.url}`);
+	const userId = req.userId;
+	const { coin } = req.body;
+	logger.info(`${userId} ${coin}`);
+	try {
+		if (coin !== undefined && userId !== undefined) {
+			await models.user.update({ coin: coin }, { where: { id: userId } });
+			return res.status(200).send(infoMsg.success);
+		} else {
+			return res.status(400).send(errorMsg.notEnoughRequirement);
+		}
+
+	} catch {
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.send(500).send(errorMsg.internalServerError);
+	}
+};
