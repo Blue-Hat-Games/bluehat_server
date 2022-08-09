@@ -29,3 +29,11 @@ exports.alreadyDeleted = {
 exports.pageNotFound = {
     msg: "page not found"
 }
+
+exports.userNotFound = {
+    msg: "user not found"
+}
+
+exports.notEnoughCoin = {
+    msg: "not enough coin"
+}

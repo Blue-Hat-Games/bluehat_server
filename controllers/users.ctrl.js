@@ -115,21 +115,66 @@ exports.editUserInfo = async (req, res) => {
 	}
 };
 
+
+exports.getUserCoin = async (req, res) => {
+	/*
+		get user coin
+		input: userId
+		output: user coin
+	*/
+	console.log(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.url}`);
+	const userId = req.userId;
+	try {
+		const user = await models.user.findOne({ where: { id: userId }, attributes: ["coin"] });
+		if (user) {
+			return res.status(200).send({
+				msg: 'Get Coin Success',
+				coin: user.coin
+			});
+		} else {
+			return res.status(404).send(errorMsg.notFound);
+		}
+	} catch (e) {
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.send(500).send(errorMsg.internalServerError);
+	}
+}
+
 exports.updateUserCoin = async (req, res) => {
+	/*
+		update user coin
+		input: coin, userId
+		output: success or fail and update coin
+	*/
+	console.log('updateUserCoin');
 	logger.info(`${req.method} ${req.url}`);
 	const userId = req.userId;
 	const { coin } = req.body;
 	logger.info(`${userId} ${coin}`);
+	if (coin === undefined || userId === undefined) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
 	try {
-		if (coin !== undefined && userId !== undefined) {
-			await models.user.update({ coin: coin }, { where: { id: userId } });
-			return res.status(200).send(infoMsg.success);
-		} else {
-			return res.status(400).send(errorMsg.notEnoughRequirement);
+		const user = await models.user.findOne({ where: { id: userId }, attributes: ["coin"] });
+		if (user) {
+			const newCoin = user.coin + coin;
+			if (newCoin < 0) {
+				return res.status(400).send(errorMsg.notEnoughCoin);
+			}
+			models.user.update({ coin: newCoin }, { where: { id: userId } });
+			return res.status(200).send({
+				msg: 'Update Coin Success',
+				coin: newCoin
+			});
+		}
+		else {
+			return res.status(404).send(errorMsg.userNotFound);
 		}
 
-	} catch {
+	}
+	catch (e) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);
-		return res.send(500).send(errorMsg.internalServerError);
+		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
