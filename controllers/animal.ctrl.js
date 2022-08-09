@@ -55,7 +55,7 @@ exports.getUserAnimal = async function (req, res, next) {
 	}
 };
 
-exports.getNewAnimal = async function (req, res, next) {
+exports.makeNewAnimal = async function (req, res, next) {
 	/*
 		1. Create New Animal to user
 	*/

@@ -6,7 +6,7 @@ const verifyUtils = require("../utils/verify");
 const { Op } = require("sequelize");
 const logger = require("../config/logger");
 const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI('ipfs-api', '5001', {protocol: 'http'})
+const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
 
 exports.mergeAnimal = async function (req, res, next) {
 	const { animalId1, animalId2, color, tokenURL } = req.body;
@@ -139,7 +139,6 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
-
 };
 
 exports.getMetaData = async function (req, res, next) {
@@ -175,8 +174,8 @@ exports.uploadIpfs = async function (req, res) {
 		logger.info("upload ipfs");
 		ipfs.files.add(req.file.buffer, function (err, file) {
 			if (err) {
-			  logger.info(err);
-			  return res.status(500).send(err);
+				logger.info(err);
+				return res.status(500).send(err);
 			}
 			json_result = JSON.stringify({
 				"image": "https://ipfs.io/ipfs/" + file[0].hash,
@@ -186,18 +185,17 @@ exports.uploadIpfs = async function (req, res) {
 			});
 
 			ipfs.files.add(
-				Buffer.from(json_result),function(err, json_file)
-				{
+				Buffer.from(json_result), function (err, json_file) {
 					if (err) {
 						logger.info(err);
 						return res.status(500).send(err);
 					}
 					logger.info(file);
-					return res.status(200).send({"link":"https://ipfs.io/ipfs/" +json_file[0].hash});
+					return res.status(200).send({ "link": "https://ipfs.io/ipfs/" + json_file[0].hash });
 				}
 			)
-		  })
-		
+		})
+
 	} catch (e) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
@@ -216,9 +214,10 @@ exports.makeNFT = async function (req, res) {
 		let tokenURL = await nftUtils.uploadIpfsMeta(imgHash);
 		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
 		return res.status(200).send(nftMintResult);
-		
+
 	} catch (e) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
+
