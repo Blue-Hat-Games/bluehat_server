@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Bluehat NFT Test</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+    <script src='//code.jquery.com/jquery.min.js'></script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js'></script>
+    
+    <script>
+      function imageUplaod()  {
+        $("upload-btn").text("Minting...");
+          $.ajax({
+          type: 'POST',
+          url: '/nft/character/test',
+          dataType: 'json',
+          data: JSON.stringify(),
+          success: function(data) {
+            window.open('https://baobab.scope.klaytn.com/tx/'+data['transactionHash']);
+            $("upload-btn").text("Upload File");
+          },
+          error: function(data) {
+            alert(data);
+          }
+     });
+    }
+    $(document).ready(function() {
+        $("#input-file").on("change", imageUplaod);
+      });
+    </script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="./stylesheets/cover.css" rel="stylesheet">
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="mb-auto">
+    <div>
+      <h3 class="float-md-start mb-0">Bluehat</h3>
+      <nav class="nav nav-masthead justify-content-center float-md-end">
+      </nav>
+    </div>
+  </header>
+
+  <main class="px-3">
+    <h1>Make Klayton NFT</h1>
+    <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+    <p class="lead">
+      <label href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" for="input-file" id="upload-btn">Upload File</label>
+      <input type="file" id="input-file"/> 
+    </p>
+    
+  </main>
+
+  <footer class="mt-auto text-white-50">
+    <p>Konkuk University Smart ICT term project</p>
+  </footer>
+</div>
+
+
+    
+  </body>
+</html>
