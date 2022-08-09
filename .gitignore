@@ -38,3 +38,5 @@ jspm_packages
 /.idea
 .env
 .DS_Store
+dump.rdb
+/data
