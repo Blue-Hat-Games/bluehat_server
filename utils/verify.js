@@ -15,7 +15,6 @@ exports.decryptVal = function (data) {
 };
 
 exports.makeToken = function (val) {
-    console.log(val)
 	const token = jwt.sign({ userId: encryptVal(val.toString()) }, process.env.JWT_SECRET, {
 		expiresIn: "7d",
 		issuer: "http://bluehat.games",

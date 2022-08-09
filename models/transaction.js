@@ -20,6 +20,10 @@ module.exports = function (sequelize, DataTypes) {
 				type: DataTypes.STRING,
 				allowNull: true,
 			},
+			ipfs_hash:{
+				type: DataTypes.STRING,
+				allowNull: true,
+			}
 		},
 		{
 			sequelize,

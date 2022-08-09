@@ -2,14 +2,17 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
-const errorMsg = require("./message/msg_error");
 
-var indexRouter = require("./routes");
+// Message setting
+const errorMsg = require("./message/msg_error");
+const infoMsg = require("./message/msg_info");
+
 var usersRouter = require("./routes/users");
 var nftRouter = require("./routes/nft");
 var authRouter = require("./routes/auth");
 var animalRouter = require("./routes/animal");
 var marketRouter = require("./routes/market");
+const logger = require("./config/logger");
 var app = express();
 
 // Default Setting
@@ -19,14 +22,19 @@ const port = process.env.PORT || 3000;
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ 
+  limit : '50mb',
+  extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
+// index page status setting
+app.use("/index", function (req, res, next) {
+  res.status(200).send(infoMsg.success);
+});
 
-// Router Setting
-app.use("/", indexRouter);
+// router setting
 app.use("/users", usersRouter);
 app.use("/nft", nftRouter);
 app.use("/auth", authRouter);
@@ -47,10 +55,12 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   if (err.status === 404) {
+    logger.error('404 Not Found: ' + req.method + ' ' + req.url);
     res.send(errorMsg.pageNotFound);
   }
-  else{
-  res.send(errorMsg.internalServerError);
+  else {
+    logger.error(err.status + ' ' + req.method + ' ' + req.url + ': ' + err.message);
+    res.send(errorMsg.internalServerError);
   }
 });
 

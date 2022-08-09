@@ -121,7 +121,7 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.getMarketAnimalCounts = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -138,8 +138,7 @@ exports.getMarketAnimalCounts = async function (req, res, next) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
 	}
-}
-
+};
 
 exports.getMarketAnimalDetail = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -185,8 +184,7 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 			logger.error(e);
 			return res.status(500).send(errorMsg.internalServerError);
 		}
-	}
-
+};
 
 exports.buyAnimalfromMarket = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -221,7 +219,7 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
 	}
-}
+};
 
 exports.testNftTrade = async function (req, res, next) {
 	try{
@@ -232,4 +230,4 @@ exports.testNftTrade = async function (req, res, next) {
 		res.status(500).send(errorMsg.internalServerError);
 	}
 
-}
+};
