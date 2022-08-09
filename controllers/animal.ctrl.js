@@ -21,14 +21,6 @@ exports.getUserAnimal = async function (req, res, next) {
 					attributes: ["filename"],
 				},
 				{
-					model: models.body_item,
-					attributes: ["filename"],
-				},
-				{
-					model: models.foot_item,
-					attributes: ["filename"],
-				},
-				{
 					model: models.pattern,
 					attributes: ["filename"],
 				},
@@ -39,13 +31,9 @@ exports.getUserAnimal = async function (req, res, next) {
 		userAnimal.forEach(element => {
 			element.animalType = element["animal.type"];
 			element.headItem = element["head_item.filename"];
-			element.bodyItem = element["body_item.filename"];
-			element.footItem = element["foot_item.filename"];
 			element.pattern = element["pattern.filename"];
 			delete element["animal.type"];
 			delete element["head_item.filename"];
-			delete element["body_item.filename"];
-			delete element["foot_item.filename"];
 			delete element["pattern.filename"];
 		});
 		return res.status(200).send({ "data": userAnimal });
