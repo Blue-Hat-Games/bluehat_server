@@ -6,6 +6,7 @@ const { verifyToken } = require('../middlewares/verify');
 router.get("/get-user-animal", verifyToken, animalCtrl.getUserAnimal);
 router.post("/make-animal", verifyToken, animalCtrl.makeNewAnimal);
 router.post("/change-color", verifyToken, animalCtrl.changeAnimalColor);
+router.post('/update', verifyToken, animalCtrl.updateAnimal);
 
 
 module.exports = router;

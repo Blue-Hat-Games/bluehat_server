@@ -94,3 +94,21 @@ exports.changeAnimalColor = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
+
+exports.updateAnimal = async function (req, res, next) {
+
+	logger.info(`${req.method} ${req.url}`);
+	const { name, tier, color, id, animalType, headItem, pattern } = req.body.data;
+	if (id === undefined || name === undefined || tier === undefined || color === undefined || animalType === undefined || headItem === undefined || pattern === undefined) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	try {
+		const head_item_id = await models.head_item.findOne({ where: { filename: headItem } });
+		const pattern_id = await models.pattern.findOne({ where: { filename: pattern } });
+		const animal_id = await models.animal.findOne({ where: { type: animalType } });
+		await models.animal_possession.update({ name: name, color: color, animal_id: animal_id.id, head_item_id: head_item_id.id, pattern_id: pattern_id.id }, { where: { id: id } });
+	} catch (e) {
+		logger.error(`${req.method} ${req.url}` + ": " + e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+}
