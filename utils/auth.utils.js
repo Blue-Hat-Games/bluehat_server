@@ -67,7 +67,7 @@ exports.sendVerifyEmail = function (userMailAdress, authKey) {
 
 // 유저이메일 인증 여부 저장, 인증 여부 변경
 exports.setAuthUser = async function (email, value, exp = 60 * 60) {
-	redisClient.set(email, value, { EX: exp }, function (err, reply) {
+	redisClient.set(JSON.stringify(email), JSON.stringify(value), { EX: exp }, function (err, reply) {
 		if (err) {
 			console.log("SetAuthUser Error: ", err);
 			return false;
