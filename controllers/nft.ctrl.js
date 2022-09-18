@@ -7,9 +7,10 @@ const { Op } = require("sequelize");
 const logger = require("../config/logger");
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
+const colorUtils = require("../utils/color.utils");
 
 exports.mergeAnimal = async function (req, res, next) {
-	const { animalId1, animalId2, color, tokenURL } = req.body;
+	const { animalId1, animalId2, tokenURL } = req.body;
 	if (animalId1 === undefined || animalId2 === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -18,7 +19,8 @@ exports.mergeAnimal = async function (req, res, next) {
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
-
+		let animal_type = animals[randomVal()].animal_id;
+		let color = await colorUtils.synthesizeColor(animals[0].dataValues.color, animals[1].dataValues.color, animal_type);
 		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
 
 		function randomVal() {
@@ -29,7 +31,7 @@ exports.mergeAnimal = async function (req, res, next) {
 			tier: animals[randomVal()].tier,
 			user_id: req.userId,
 			color: color,
-			animal_id: animals[randomVal()].animal_id,
+			animal_id: animal_type,
 			head_item_id: animals[randomVal()].head_item_id,
 			body_item_id: animals[randomVal()].body_item_id,
 			foot_item_id: animals[randomVal()].foot_item_id,
@@ -50,6 +52,7 @@ exports.mergeAnimal = async function (req, res, next) {
 		return res.status(201).send(new_animals);
 
 	} catch (e) {
+		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
