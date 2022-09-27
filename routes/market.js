@@ -6,7 +6,7 @@ const { verifyToken } = require('../middlewares/verify');
 router.get("/list", marketCtrl.getAllMarketAnimal);
 router.post("/sell", verifyToken, marketCtrl.sellAnimaltoMarket);
 router.get("/counts", marketCtrl.getMarketAnimalCounts);
-router.get('', marketCtrl.getMarketAnimalDetail);
+router.get('/detail', marketCtrl.getMarketAnimalDetail);
 router.post("/buy", verifyToken, marketCtrl.buyAnimalfromMarket);
 router.post("/trade-nft", marketCtrl.testNftTrade);
 
