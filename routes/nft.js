@@ -5,7 +5,7 @@ const { verifyToken } = require('../middlewares/verify');
 const { uploadFile } = require('../middlewares/file');
 
 
-router.post("", verifyToken, nftCtrl.mergeAnimal);
+router.post("/merge", verifyToken, nftCtrl.mergeAnimal);
 router.get("/user/animal", verifyToken, nftCtrl.getUserNftAnimal);
 router.get("/user/animal/count", verifyToken, nftCtrl.getUserNftAnimalCount);
 router.get("/user/animal/:id", verifyToken, nftCtrl.getUserNftAnimalById);
