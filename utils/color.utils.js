@@ -50,3 +50,22 @@ exports.synthesizeColor = async function (color1, color2, animal_type) {
 	return JSON.stringify(new_color);
 }
 
+exports.changeColor = async function (color, animal_type) {
+	color_json = JSON.parse(color);
+	let new_color;
+	while (true) {
+		new_color = COLOR_OBJ;
+		for (let i = 0; i < COLOR_LENGTH; i++) {
+			new_color[i].r = (color_json[i].r + Math.round(Date.now() + Math.random()) % 255) % 255;
+			new_color[i].g = (color_json[i].g + Math.round(Date.now() + Math.random()) % 255) % 255;
+			new_color[i].b = (color_json[i].b + Math.round(Date.now() + Math.random()) % 255) % 255;
+			new_color[i].a = 255;
+		}
+		if (await checkDuplicateColor(JSON.stringify(new_color), animal_type))
+			continue;
+		else
+			break;
+	}
+	return JSON.stringify(new_color);
+
+}

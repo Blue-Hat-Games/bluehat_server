@@ -2,6 +2,7 @@ const models = require("../models");
 const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
+const colorUtils = require("../utils/color.utils");
 
 exports.getUserAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -83,11 +84,12 @@ exports.changeAnimalColor = async function (req, res, next) {
 	*/
 	logger.info(`${req.method} ${req.url}`);
 	const { animalId, color } = req.body;
+	let new_color = colorUtils.changeColor(color, animalId);
 	if (color === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
 	try {
-		await models.animal_possession.update({ color: color }, { where: { id: animalId } });
+		await models.animal_possession.update({ color: new_color }, { where: { id: animalId } });
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);

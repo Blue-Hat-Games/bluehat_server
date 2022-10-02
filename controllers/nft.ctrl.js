@@ -33,8 +33,6 @@ exports.mergeAnimal = async function (req, res, next) {
 			color: color,
 			animal_id: animal_type,
 			head_item_id: animals[randomVal()].head_item_id,
-			body_item_id: animals[randomVal()].body_item_id,
-			foot_item_id: animals[randomVal()].foot_item_id,
 			pattern_id: animals[randomVal()].pattern_id,
 		};
 
