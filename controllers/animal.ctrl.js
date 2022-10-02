@@ -53,18 +53,17 @@ exports.makeNewAnimal = async function (req, res, next) {
 		const allAnimalLength = await models.animal.count();
 		let animalPickIndex = Math.floor(Math.random() * allAnimalLength + 1);
 		let animal = await models.animal.findOne({ where: { id: animalPickIndex } });
+		let color = colorUtils.makeDefaultColor();
 
 		await models.animal_possession
 			.create({
 				nft_hash: null,
-				color: null,
+				color: color,
 				name: "testAnimal",
 				tier: 1,
 				user_id: req.userId,
 				animal_type: animal.id,
 				head_item_id: 1,
-				body_item_id: 1,
-				foot_item_id: 1,
 				pattern_id: 1,
 			})
 			.then((user) => {
@@ -83,13 +82,18 @@ exports.changeAnimalColor = async function (req, res, next) {
 		1. Change Animal Color
 	*/
 	logger.info(`${req.method} ${req.url}`);
-	const { animalId, color } = req.body;
-	let new_color = colorUtils.changeColor(color, animalId);
-	if (color === undefined) {
-		return res.status(400).send(errorMsg.needParameter);
-	}
 	try {
-		await models.animal_possession.update({ color: new_color }, { where: { id: animalId } });
+		const animal_id = req.body.animalId;
+		if (animal_id === undefined) {
+			return res.status(400).send(errorMsg.needParameter);
+		}
+		let animal = await models.animal_possession.findOne({
+			where: { id: animal_id },
+			attributes: ["animal_type", "color"],
+		});
+		let new_color = await colorUtils.changeColor(animal.dataValues.color, animal.dataValues.animal_type);
+		console.log("NEW_COLOR: ", new_color);
+		await models.animal_possession.update({ color: new_color }, { where: { id: animal_id } });
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
 		logger.error(`${req.method} ${req.url}` + ": " + e);

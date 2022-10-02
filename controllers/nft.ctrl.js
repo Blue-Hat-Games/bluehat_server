@@ -130,7 +130,7 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 		let possessionInfo = await models.animal_possession.findOne({
 			where: { id: req.params.id },
 			attributes: ["id", "nft_hash", "color", "name", "tier", "animal_type", "head_item_id",
-				"foot_item_id", "pattern_id", "createdAt", "updatedAt"]
+				"pattern_id", "createdAt", "updatedAt"]
 		});
 		if (!possessionInfo) {
 			return res.status(400).send({ "status": "fail", "msg": "No animal existed" });
