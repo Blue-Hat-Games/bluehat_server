@@ -15,6 +15,16 @@ async function checkDuplicateColor(color, animal_type) { //동일한 색 & 동�
 	});
 }
 
+exports.makeDefaultColor = function () {
+	let default_color = COLOR_OBJ;
+	for (let i = 0; i < COLOR_LENGTH; i++) {
+		default_color[i].r = 255;
+		default_color[i].g = 255;
+		default_color[i].b = 255;
+		default_color[i].a = 255;
+	}
+	return JSON.stringify(default_color);
+}
 exports.synthesizeColor = async function (color1, color2, animal_type) {
 	color1_json = JSON.parse(color1);
 	color2_json = JSON.parse(color2);
