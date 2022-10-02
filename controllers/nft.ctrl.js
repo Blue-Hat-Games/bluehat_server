@@ -19,7 +19,7 @@ exports.mergeAnimal = async function (req, res, next) {
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
-		let animal_type = animals[randomVal()].animal_id;
+		let animal_type = animals[randomVal()].animal_type;
 		let color = await colorUtils.synthesizeColor(animals[0].dataValues.color, animals[1].dataValues.color, animal_type);
 		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
 
@@ -31,10 +31,8 @@ exports.mergeAnimal = async function (req, res, next) {
 			tier: animals[randomVal()].tier,
 			user_id: req.userId,
 			color: color,
-			animal_id: animal_type,
+			animal_type: animal_type,
 			head_item_id: animals[randomVal()].head_item_id,
-			body_item_id: animals[randomVal()].body_item_id,
-			foot_item_id: animals[randomVal()].foot_item_id,
 			pattern_id: animals[randomVal()].pattern_id,
 		};
 
@@ -131,7 +129,7 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 	try {
 		let possessionInfo = await models.animal_possession.findOne({
 			where: { id: req.params.id },
-			attributes: ["id", "nft_hash", "color", "name", "tier", "animal_id", "head_item_id", "body_item_id", "foot_item_id",
+			attributes: ["id", "nft_hash", "color", "name", "tier", "animal_type", "head_item_id",
 				"foot_item_id", "pattern_id", "createdAt", "updatedAt"]
 		});
 		if (!possessionInfo) {

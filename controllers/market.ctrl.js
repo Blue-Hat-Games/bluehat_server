@@ -47,7 +47,7 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 				},
 				{
 					model: models.animal_possession,
-					attributes: ['animal_id', 'name']
+					attributes: ['animal_type', 'name']
 				}],
 			raw: true,
 			attributes: ["id", "price", "view_count", "description", "updatedAt"],
@@ -55,8 +55,8 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 		allAnimal.forEach(element => {
 			element.username = element["user.username"];
 			delete element["user.username"];
-			element.animal_type = element["animal_possession.animal_id"];
-			delete element["animal_possession.animal_id"];
+			element.animal_type = element["animal_possession.animal_type"];
+			delete element["animal_possession.animal_type"];
 			element.animal_name = element["animal_possession.name"];
 			delete element["animal_possession.name"];
 		});
@@ -155,7 +155,7 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 				},
 				{
 					model: models.animal_possession,
-					attributes: ['animal_id', 'name', 'color'],
+					attributes: ['animal_type', 'name', 'color'],
 				}],
 			raw: true,
 			attributes: ["id", "price", "view_count", "description", "updatedAt"]
@@ -172,7 +172,7 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 				"updatedAt": marketAnimal.updatedAt,
 				"view_count": marketAnimal.view_count,
 				"username": marketAnimal["user.username"],
-				"animal_type": marketAnimal["animal_possession.animal_id"],
+				"animal_type": marketAnimal["animal_possession.animal_type"],
 				"animal_name": marketAnimal["animal_possession.name"],
 				"animal_color": marketAnimal["animal_possession.color"],
 			}
