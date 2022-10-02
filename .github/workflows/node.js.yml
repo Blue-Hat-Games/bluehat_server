@@ -9,7 +9,7 @@ on:
 jobs:
  build:
    name: Build
-   runs-on: ubuntu-latest
+   runs-on: ubuntu-18.04
    steps:
    
      - name: Get Github action IP
@@ -18,9 +18,9 @@ jobs:
        
      - name: Setting environment variables
        run: |
-         echo "AWS_DEFAULT_REGION=ap-southeast-1" >> $GITHUB_ENV
+         echo "AWS_DEFAULT_REGION=ap-northeast-2" >> $GITHUB_ENV
          echo "AWS_SG_NAME=launch-wizard-2" >> $GITHUB_ENV
-     
+         
      - name: Configure AWS credentials
        uses: aws-actions/configure-aws-credentials@v1
        with:
@@ -53,4 +53,3 @@ jobs:
          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
          AWS_DEFAULT_REGION: ap-northeast-2
-    
