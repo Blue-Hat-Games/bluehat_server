@@ -20,6 +20,5 @@ jobs:
          port: ${{ secrets.PORT }}
          script: |
            ./deploy.sh
-       env:
          AWS_ACCESS_KEY_ID: ${{ secrets. AWS_IAM_MANAGER_KEY_ID }}
          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
