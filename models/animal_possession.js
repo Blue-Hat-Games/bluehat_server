@@ -42,7 +42,7 @@ module.exports = function (sequelize, DataTypes) {
 			allowNull: false,
 		})
 		animal_possession.belongsTo(models.animal, {
-			foreignKey: "animal_id",
+			foreignKey: "animal_type",
 			targetKey: "id",
 			allowNull: false
 		})

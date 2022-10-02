@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 
 async function checkDuplicateColor(color, animal_type) { //동일한 색 & 동일한 동물이 있는지 확인
 	await models.animal_possession.findOne({
-		where: { [Op.and]: [{ color: color }, { animal_id: animal_type }] },
+		where: { [Op.and]: [{ color: color }, { animal_type: animal_type }] },
 	}).then((result) => {
 		if (result) {
 			return true;
