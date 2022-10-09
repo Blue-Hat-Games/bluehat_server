@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const userCtrl = require('../controllers/users.ctrl');
+const userCtrl = require('../controllers/user.ctrl');
 const { verifyToken } = require('../middlewares/verify');
 
 router.post("/", userCtrl.addUser);
