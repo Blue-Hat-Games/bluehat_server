@@ -5,7 +5,8 @@ COPY package*.json ./
 
 ENV TZ=Asia/Seoul
 
-RUN npm install tzdata
+RUN apt-get update
+RUN apt-get install tzdata
 RUN npm install -g pm2
 RUN npm install
 
