@@ -3,6 +3,9 @@ FROM node:16.14.2
 WORKDIR /app
 COPY package*.json ./
 
+ENV TZ=Asia/Seoul
+
+RUN npm install tzdata
 RUN npm install -g pm2
 RUN npm install
 

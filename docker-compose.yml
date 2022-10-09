@@ -10,6 +10,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+    volumes: 
+      - './logs:/app/logs'
     stdin_open: true
     tty: true
     depends_on:
