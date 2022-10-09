@@ -1,5 +1,5 @@
 const models = require("../models");
-const userUtils = require("../utils/users.utils");
+const userUtils = require("../utils/user.utils");
 const errorMsg = require("../message/msg_error.js");
 const infoMsg = require("../message/msg_info.js");
 const { makeToken } = require("../utils/verify.js");

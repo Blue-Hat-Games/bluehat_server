@@ -2,58 +2,10 @@ const models = require("../models");
 const nftUtils = require("../utils/nft.utils");
 const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
-const verifyUtils = require("../utils/verify");
 const { Op } = require("sequelize");
 const logger = require("../config/logger");
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
-const colorUtils = require("../utils/color.utils");
-
-exports.mergeAnimal = async function (req, res, next) {
-	const { animalId1, animalId2, tokenURL } = req.body;
-	if (animalId1 === undefined || animalId2 === undefined) {
-		return res.status(400).send(errorMsg.needParameter);
-	}
-	try {
-		// NFT가 아니고, 두가지 속성중 무작위 하나 선택
-		let animals = await models.animal_possession.findAll({
-			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
-		});
-		let animal_type = animals[randomVal()].animal_type;
-		let color = await colorUtils.synthesizeColor(animals[0].dataValues.color, animals[1].dataValues.color, animal_type);
-		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
-
-		function randomVal() {
-			return Math.round(Math.random());
-		}
-		let new_animal = {
-			name: animals[randomVal()].name,
-			tier: animals[randomVal()].tier,
-			user_id: req.userId,
-			color: color,
-			animal_type: animal_type,
-			head_item_id: animals[randomVal()].head_item_id,
-			pattern_id: animals[randomVal()].pattern_id,
-		};
-
-		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
-		new_animal['nft_hash'] = nftMintResult.transactionHash;
-
-		let new_animals = await models.animal_possession.create(new_animal);
-
-		await models.animal_possession
-			.destroy({
-				where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
-			})
-			.then(logger.info("merge success"));
-
-		return res.status(201).send(new_animals);
-
-	} catch (e) {
-		logger.error(e);
-		return res.status(500).send(errorMsg.internalServerError);
-	}
-};
 
 exports.getUserNftAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
