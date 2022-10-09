@@ -3,6 +3,8 @@ const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
 const colorUtils = require("../utils/color.utils");
+const nftUtils = require('../utils/nft.utils');
+const { Op } = require("sequelize");
 
 exports.getUserAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.url}`);
@@ -54,9 +56,15 @@ exports.mergeAnimal = async function (req, res, next) {
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
-		let animal_type = animals[randomVal()].animal_type;
+		//1~10 사이의 숫자
+		let animal_type;
+		if (Math.floor(Math.random() * 10 + 1) <= 2) {//20% 확률
+			animal_type = Math.random() * (await models.animal.count()) + 1
+		}
+		else
+			animal_type = animals[randomVal()].animal_type;
 		let color = await colorUtils.synthesizeColor(animals[0].dataValues.color, animals[1].dataValues.color, animal_type);
-		let user_wallet = await models.user.findOne({ where: { id: req.userId } });
+		// let user_wallet = await models.user.findOne({ where: { id: req.userId } });
 
 		function randomVal() {
 			return Math.round(Math.random());
@@ -71,8 +79,8 @@ exports.mergeAnimal = async function (req, res, next) {
 			pattern_id: animals[randomVal()].pattern_id,
 		};
 
-		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
-		new_animal['nft_hash'] = nftMintResult.transactionHash;
+		// let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
+		// new_animal['nft_hash'] = nftMintResult.transactionHash;
 
 		let new_animals = await models.animal_possession.create(new_animal);
 
