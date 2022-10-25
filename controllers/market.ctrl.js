@@ -1,4 +1,5 @@
 const models = require("../models");
+const sequelize = require("../models").sequelize;
 const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
@@ -72,19 +73,21 @@ exports.tradeAnimal = async function (req, res, next) {
 	if (!req.body.animal_id || !req.body.user_id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
+	const tr = await sequelize.transaction();
 	try {
-		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id } });
+		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id } }, { transaction: tr });
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
-		let possessionUser = await models.user.findOne({ where: { id: animal["user_id"] } }); // 소유자 검색
+		let possessionUser = await models.user.findOne({ where: { id: animal["user_id"] } }, { transaction: tr }); // 소유자 검색
 
 		//개발용 유저 사용
 		possessionUser = "";
 		const senderPrivateKey = ""; //테스트 개발용 임시 PrivateKey 사용
-
+		await tr.commit();
 	} catch (e) {
 		logger.error(e);
+		await tr.rollback();
 		res.status(500).send(errorMsg.internalServerError);
 	}
 };
@@ -95,8 +98,9 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 	if (!animal_id || !price || !seller_private_key) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
+	const tr = await sequelize.transaction();
 	try {
-		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
+		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId }, transaction: tr });
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
@@ -115,10 +119,12 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 			token_id: "",
 			user_id: req.userId,
 			view_count: 0,
-		});
+		}, { transaction: tr });
+		await tr.commit();
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
 		logger.error(e);
+		await tr.rollback();
 		res.status(500).send(errorMsg.internalServerError);
 	}
 };
@@ -194,9 +200,10 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 	if (!buy_animal_id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
+	const tr = await sequelize.transaction();
 	try {
-		const buy_user = await models.user.findOne({ where: { id: req.userId } });
-		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
+		const buy_user = await models.user.findOne({ where: { id: req.userId } }, { transaction: tr });
+		const animal = await models.market.findOne({ where: { id: buy_animal_id } }, { transaction: tr });
 		if (buy_user.id == animal.user_id) {
 			result = {
 				"status": "fail",
@@ -205,9 +212,10 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 			return res.status(200).send(result);
 		}
 		if (animal.price <= buy_user.coin) {
-			const result = await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } });
-			const result2 = await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id } });
-			await models.market.destroy({ where: { id: buy_animal_id } });
+			const result = await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } }, { transaction: tr });
+			const result2 = await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id }, transaction: tr });
+			await models.market.destroy({ where: { id: buy_animal_id } }, { transaction: tr });
+			await tr.commit();
 			return res.status(200).send(infoMsg.success);
 		}
 		else {
@@ -215,10 +223,12 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 				"status": "fail",
 				"msg": "Not Enough Coin"
 			}
+			await tr.commit();
 			return res.status(200).send(result)
 		}
 	} catch (e) {
 		logger.error(e);
+		await tr.rollback();
 		res.status(500).send(errorMsg.internalServerError);
 	}
 };
