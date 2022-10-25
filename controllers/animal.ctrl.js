@@ -56,7 +56,7 @@ exports.mergeAnimal = async function (req, res, next) {
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
-		if (!animals.dataValues)
+		if (!animals)
 			return res.status(400).send(errorMsg.animalNotFound);
 		//1~10 사이의 숫자
 		let animal_type;
@@ -85,14 +85,22 @@ exports.mergeAnimal = async function (req, res, next) {
 		// new_animal['nft_hash'] = nftMintResult.transactionHash;
 
 		let new_animals = await models.animal_possession.create(new_animal);
-
+		let merge_result = {
+			name: new_animals.name,
+			tier: new_animals.tier,
+			color: color,
+			id: new_animals.id,
+			animalType: new_animal.animal_type,
+			headItem: new_animal.head_item_id,
+			pattern: new_animal.pattern_id,
+		};
 		await models.animal_possession
 			.destroy({
 				where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 			})
 			.then(logger.info("merge success"));
 
-		return res.status(201).send(new_animals);
+		return res.status(201).send(merge_result);
 
 	} catch (e) {
 		logger.error(e);
