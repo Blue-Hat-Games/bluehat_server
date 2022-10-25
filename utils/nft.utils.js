@@ -13,6 +13,7 @@ const sellerPrivateKey = config.sellerPrivateKey;
 const caver = config.caver;
 const logger = require("../config/logger");
 const { promisify } = require("util");
+const { verify } = require("crypto");
 
 var newID = function () {
 	return Math.random().toString(36).substr(2, 16);
@@ -20,13 +21,11 @@ var newID = function () {
 
 exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	const keyring = caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
-
 	if (!caver.wallet.getKeyring(keyring.address)) {
 		const singleKeyRing =
 			caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
 		caver.wallet.add(singleKeyRing);
 	}
-
 	let kip17 = await caver.kct.kip17.deploy(
 		{
 			name: title,
