@@ -5,7 +5,7 @@ const logger = require("../config/logger");
 const hatUtils = require("../utils/hat.utils");
 
 exports.newHat = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 
 	// let user_id = req.userId;
 	let animal_id = req.body.animalId;
@@ -22,7 +22,7 @@ exports.newHat = async function (req, res, next) {
 		await models.animal_possession.update({ head_item_id: new_item_id }, { where: { id: animal_id } });
 		res.status(201).send({ new_item_id: new_item_id });
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 }

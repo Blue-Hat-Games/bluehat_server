@@ -58,11 +58,11 @@ app.use(function (err, req, res, next) {
 	// render the error page
 	res.status(err.status || 500);
 	if (err.status === 404) {
-		logger.error('404 Not Found: ' + req.method + ' ' + req.url);
+		logger.error('404 Not Found: ' + req.method + ' ' + req.originalUrl);
 		res.send(errorMsg.pageNotFound);
 	}
 	else {
-		logger.error(err.status + ' ' + req.method + ' ' + req.url + ': ' + err.message);
+		logger.error(err.status + ' ' + req.method + ' ' + req.originalUrl + ': ' + err.message);
 		res.send(errorMsg.internalServerError);
 	}
 });

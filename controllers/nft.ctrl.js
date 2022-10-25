@@ -8,7 +8,7 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
 
 exports.getUserNftAnimal = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 
 	// Setting Default
 	if (!req.query.page) {
@@ -57,7 +57,7 @@ exports.getUserNftAnimal = async function (req, res, next) {
 };
 
 exports.getUserNftAnimalCount = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		let count = await models.animal_possession.count({ where: { user_id: req.userId, nft_hash: { [Op.ne]: null } } });
 		result = {
@@ -74,7 +74,7 @@ exports.getUserNftAnimalCount = async function (req, res, next) {
 };
 
 exports.getUserNftAnimalById = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	if (!req.params.id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -95,7 +95,7 @@ exports.getUserNftAnimalById = async function (req, res, next) {
 };
 
 exports.getMetaData = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	if (!req.params.id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -122,7 +122,7 @@ exports.getMetaData = async function (req, res, next) {
 };
 
 exports.uploadIpfs = async function (req, res) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		logger.info("upload ipfs");
 		ipfs.files.add(req.file.buffer, function (err, file) {
@@ -161,13 +161,12 @@ exports.makeNFT = async function (req, res) {
 		2. create NFT
 		3. save to Database
 	*/
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		let imgHash = await nftUtils.uploadIpfsImg(req.file);
 		let tokenURL = await nftUtils.uploadIpfsMeta(imgHash);
 		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
 		return res.status(200).send(nftMintResult);
-
 	} catch (e) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);

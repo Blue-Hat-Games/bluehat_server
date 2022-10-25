@@ -6,7 +6,7 @@ const { makeToken } = require("../utils/verify.js");
 const logger = require("../config/logger");
 
 exports.addUser = async (req, res) => {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	// Check Input Parmeter
 	const { email } = req.body;
 	if (email === undefined) {
@@ -43,7 +43,7 @@ exports.addUser = async (req, res) => {
 			});
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
 			return res.status(400).send(errorMsg.duplicateInfo);
 		} else if (e == "EMAIL_NOT_VERIFIED") {
@@ -55,7 +55,7 @@ exports.addUser = async (req, res) => {
 };
 
 exports.delUser = async (req, res) => {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const { email } = req.body;
 	if (email === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -71,13 +71,13 @@ exports.delUser = async (req, res) => {
 		}
 		return res.status(200).send(infoMsg.success);
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
 };
 
 exports.getUserInfo = async (req, res) => {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
 	try {
 		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "wallet_address", "email", "createdAt"] });
@@ -93,13 +93,13 @@ exports.getUserInfo = async (req, res) => {
 			return res.status(404).send(errorMsg.notFound);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
 };
 
 exports.editUserInfo = async (req, res) => {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
 	const { username, email } = req.body;
 	try {
@@ -110,7 +110,7 @@ exports.editUserInfo = async (req, res) => {
 			return res.status(400).send(errorMsg.notEnoughRequirement);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
 };
@@ -122,8 +122,7 @@ exports.getUserCoin = async (req, res) => {
 		input: userId
 		output: user coin
 	*/
-	console.log(`${req.method} ${req.url}`);
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
 	try {
 		const user = await models.user.findOne({ where: { id: userId }, attributes: ["coin"] });
@@ -136,7 +135,7 @@ exports.getUserCoin = async (req, res) => {
 			return res.status(404).send(errorMsg.notFound);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.send(500).send(errorMsg.internalServerError);
 	}
 }
@@ -147,8 +146,7 @@ exports.updateUserCoin = async (req, res) => {
 		input: coin, userId
 		output: success or fail and update coin
 	*/
-	console.log('updateUserCoin');
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
 	const { coin } = req.body;
 	logger.info(`${userId} ${coin}`);
@@ -174,7 +172,7 @@ exports.updateUserCoin = async (req, res) => {
 
 	}
 	catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };

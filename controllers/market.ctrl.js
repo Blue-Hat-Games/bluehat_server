@@ -7,7 +7,7 @@ const { Op } = require("sequelize");
 const nftUtils = require("../utils/nft.utils");
 
 exports.getAllMarketAnimal = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 
 	// Setting Default
 	if (!req.query.page) {
@@ -69,7 +69,7 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 };
 
 exports.tradeAnimal = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	if (!req.body.animal_id || !req.body.user_id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -93,7 +93,7 @@ exports.tradeAnimal = async function (req, res, next) {
 };
 
 exports.sellAnimaltoMarket = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const { animal_id, price, seller_private_key } = req.body;
 	if (!animal_id || !price || !seller_private_key) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -130,7 +130,7 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 };
 
 exports.getMarketAnimalCounts = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		let count = await models.market.count();
 		result = {
@@ -147,7 +147,7 @@ exports.getMarketAnimalCounts = async function (req, res, next) {
 };
 
 exports.getMarketAnimalDetail = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	//req.query.id = market.id
 	if (!req.query.id) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -195,7 +195,7 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 };
 
 exports.buyAnimalfromMarket = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const buy_animal_id = req.body.buy_animal_id;
 	if (!buy_animal_id) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -235,7 +235,7 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 
 exports.testNftTrade = async function (req, res, next) {
 	try {
-		logger.info(`${req.method} ${req.url}`);
+		logger.info(`${req.method} ${req.originalUrl}`);
 		const nftResult = await nftUtils.tradeNft(req.body.customerPrivateKey, req.body.contractAddr, req.body.tokenId, req.body.receiverAddr)
 		res.status(200).send(nftResult)
 	} catch {

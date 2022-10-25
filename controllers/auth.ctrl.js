@@ -4,7 +4,7 @@ const errorMsg = require("../message/msg_error");
 const logger = require("../config/logger");
 
 exports.verifyAuthEmail = function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		const userMailAdress = req.body.email;
 		const authKey = authUtils.encryptEmail(userMailAdress);
@@ -21,13 +21,13 @@ exports.verifyAuthEmail = function (req, res, next) {
 			res.status(400).send(errorMsg.fail);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
 
 exports.verifyAuthEmailKey = function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	let userEmail = ''
 	try {
 		userEmail = authUtils.decryptEmail(req.query.authKey);
@@ -42,7 +42,7 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 			logger.info(`${userEmail} is not verified`);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 	} finally {
 		if (userEmail) {
 			res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
@@ -50,6 +50,6 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 		else {
 			res.redirect(301, `http://bluehat.games`);
 		}
-		
+
 	}
 };

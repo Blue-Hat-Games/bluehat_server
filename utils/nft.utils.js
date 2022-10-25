@@ -94,7 +94,7 @@ exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, re
 	}
 	catch (e) {
 		logger.error(e)
-		logger.info(`${req.method} ${req.url}`);
+		logger.info(`${req.method} ${req.originalUrl}`);
 		return "err";
 	}
 
