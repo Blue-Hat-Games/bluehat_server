@@ -7,9 +7,9 @@ const nftUtils = require('../utils/nft.utils');
 const { Op } = require("sequelize");
 
 exports.getUserAnimal = async function (req, res, next) {
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	if (req.userId)
-		logger.info(req.userId + ":" + `${req.method} ${req.url}`);
+		logger.info(req.userId + ":" + `${req.method} ${req.originalUrl}`);
 	try {
 		let userId = req.userId;
 		let userAnimal = await models.animal_possession.findAll({
@@ -41,12 +41,13 @@ exports.getUserAnimal = async function (req, res, next) {
 		});
 		return res.status(200).send({ "data": userAnimal });
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
 
 exports.mergeAnimal = async function (req, res, next) {
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const { animalId1, animalId2, tokenURL } = req.body;
 	if (animalId1 === undefined || animalId2 === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -112,7 +113,7 @@ exports.makeNewAnimal = async function (req, res, next) {
 	/*
 		1. Create New Animal to user
 	*/
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		const allAnimalLength = await models.animal.count();
 		let animalPickIndex = Math.floor(Math.random() * allAnimalLength + 1);
@@ -136,7 +137,7 @@ exports.makeNewAnimal = async function (req, res, next) {
 
 		return res.status(201).send(animal);
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
@@ -145,7 +146,7 @@ exports.changeAnimalColor = async function (req, res, next) {
 	/*
 		1. Change Animal Color
 	*/
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		const animal_id = req.body.animalId;
 		if (animal_id === undefined) {
@@ -159,14 +160,14 @@ exports.changeAnimalColor = async function (req, res, next) {
 		await models.animal_possession.update({ color: new_color }, { where: { id: animal_id } });
 		return res.status(201).send(infoMsg.success);
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
 
 exports.updateAnimal = async function (req, res, next) {
 
-	logger.info(`${req.method} ${req.url}`);
+	logger.info(`${req.method} ${req.originalUrl}`);
 	const { name, tier, color, id, animalType, headItem, pattern } = req.body.data;
 	if (id === undefined || name === undefined || tier === undefined || color === undefined || animalType === undefined || headItem === undefined || pattern === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
@@ -177,7 +178,7 @@ exports.updateAnimal = async function (req, res, next) {
 		const animal_type = await models.animal.findOne({ where: { type: animalType } });
 		await models.animal_possession.update({ name: name, color: color, animal_type: animal_type.id, head_item_id: head_item_id.id, pattern_id: pattern_id.id }, { where: { id: id } });
 	} catch (e) {
-		logger.error(`${req.method} ${req.url}` + ": " + e);
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 }
