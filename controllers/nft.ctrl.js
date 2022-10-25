@@ -5,6 +5,7 @@ const infoMsg = require("../message/msg_info");
 const { Op } = require("sequelize");
 const logger = require("../config/logger");
 const ipfsAPI = require('ipfs-api');
+const { commandOptions } = require("redis");
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
 
 exports.getUserNftAnimal = async function (req, res, next) {
@@ -168,6 +169,7 @@ exports.makeNFT = async function (req, res) {
 		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
 		return res.status(200).send(nftMintResult);
 	} catch (e) {
+		console.log(e);
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
