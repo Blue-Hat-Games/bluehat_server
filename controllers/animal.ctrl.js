@@ -56,7 +56,7 @@ exports.mergeAnimal = async function (req, res, next) {
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
-		if (!animals)
+		if (!animals[0])
 			return res.status(400).send(errorMsg.animalNotFound);
 		//1~10 사이의 숫자
 		let animal_type;
