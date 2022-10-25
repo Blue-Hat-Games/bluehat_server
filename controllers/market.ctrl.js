@@ -100,7 +100,7 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 	}
 	const tr = await sequelize.transaction();
 	try {
-		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId }, transaction: tr });
+		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
@@ -202,8 +202,8 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 	}
 	const tr = await sequelize.transaction();
 	try {
-		const buy_user = await models.user.findOne({ where: { id: req.userId } }, { transaction: tr });
-		const animal = await models.market.findOne({ where: { id: buy_animal_id } }, { transaction: tr });
+		const buy_user = await models.user.findOne({ where: { id: req.userId } });
+		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
 		if (buy_user.id == animal.user_id) {
 			result = {
 				"status": "fail",
