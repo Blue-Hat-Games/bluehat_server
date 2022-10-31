@@ -10,6 +10,7 @@ const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 const authorization = config.authorization;
 const sellerPrivateKey = config.sellerPrivateKey;
+const klaytnWalletKey = config.klaytnWalletKey;
 const caver = config.caver;
 const logger = require("../config/logger");
 const { promisify } = require("util");
@@ -20,40 +21,45 @@ var newID = function () {
 };
 
 exports.getNft = async function (title, symbol, tokenURI, toAddr) {
-	const keyring = caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
-	if (!caver.wallet.getKeyring(keyring.address)) {
-		const singleKeyRing =
-			caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
-		caver.wallet.add(singleKeyRing);
-	}
-	let kip17 = await caver.kct.kip17.deploy(
-		{
-			name: title,
-			symbol: symbol,
-		},
-		keyring.address
-	);
-
-	contractAddr = kip17.options.address;
-	kip17 = new caver.kct.kip17(contractAddr);
-	minted = false;
-	while (true) {
-		randomID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-		try {
-			owner = await kip17.ownerOf(randomID);
-		} catch (e) {
-			mintResult = await kip17.mintWithTokenURI(
-				toAddr,
-				randomID,
-				tokenURI,
-				{ from: keyring.address }
-			);
-
-			minted = true;
+	try {
+		const keyring = caver.wallet.keyring.createFromKlaytnWalletKey(klaytnWalletKey);
+		if (!caver.wallet.getKeyring(keyring.address)) {
+			const singleKeyRing =
+				caver.wallet.keyring.createFromKlaytnWalletKey(klaytnWalletKey);
+			caver.wallet.add(singleKeyRing);
 		}
-		if (minted) {
-			break;
+		let kip17 = await caver.kct.kip17.deploy(
+			{
+				name: title,
+				symbol: symbol,
+			},
+			keyring.address
+		);
+
+		contractAddr = kip17.options.address;
+		kip17 = new caver.kct.kip17(contractAddr);
+		minted = false;
+		while (true) {
+			randomID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+			try {
+				owner = await kip17.ownerOf(randomID);
+			} catch (e) {
+				mintResult = await kip17.mintWithTokenURI(
+					toAddr,
+					randomID,
+					tokenURI,
+					{ from: keyring.address }
+				);
+
+				minted = true;
+			}
+			if (minted) {
+				break;
+			}
 		}
+	} catch (e) {
+		logger.error(e)
+		return "err";
 	}
 	return mintResult
 };

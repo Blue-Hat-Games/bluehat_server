@@ -1,6 +1,7 @@
 require("dotenv").config();
 const accessKeyId = process.env.KAS_ACESS_KEY_ID
 const secretAccessKey = process.env.KAS_SECRET_ACESS_KEY;
+const klaytnWalletKey = process.env.BAOBAB_KLAYTN_WALLET_KEY;
 const authorization = "Basic " + Buffer.from(accessKeyId + ":" + secretAccessKey).toString("base64")
 const sellerPrivateKey = JSON.stringify(process.env.BAOBAB_SELLER_PRIVATE_KEY);
 const option = {
@@ -21,4 +22,4 @@ const caver = new Caver(
 	)
 );
 
-module.exports = { accessKeyId, secretAccessKey, authorization, caver, sellerPrivateKey }
+module.exports = { accessKeyId, secretAccessKey, authorization, caver, sellerPrivateKey, klaytnWalletKey };
