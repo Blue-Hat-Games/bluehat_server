@@ -1,3 +1,5 @@
+const { truncate } = require("fs");
+
 module.exports = function (sequelize, DataTypes) {
 	const user = sequelize.define(
 		"user",
@@ -18,7 +20,7 @@ module.exports = function (sequelize, DataTypes) {
 			},
 			wallet_address: {
 				type: DataTypes.STRING,
-				allowNull: false,
+				allowNull: true,
 			},
 			username: {
 				type: DataTypes.STRING,

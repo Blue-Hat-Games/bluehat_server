@@ -25,13 +25,8 @@ exports.addUser = async (req, res) => {
 			}
 			return res.status(200).send(login_result);
 		} else {
-			const { wallet_address } = req.body;
-			if (wallet_address === undefined) {
-				return res.status(400).send(errorMsg.notEnoughRequirement);
-			}
 			user = await models.user.create({
 				email: email,
-				wallet_address: wallet_address,
 				login_type: "email",
 				coin: 0,
 			}).then(user => {
