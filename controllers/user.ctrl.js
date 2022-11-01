@@ -28,6 +28,7 @@ exports.addUser = async (req, res) => {
 			user = await models.user.create({
 				email: email,
 				login_type: "email",
+				deleted: 0,
 				coin: 0,
 			}).then(user => {
 				register_result = {
