@@ -20,7 +20,10 @@ exports.newHat = async function (req, res, next) {
 		let total_head_item_cnt = await models.head_item.count();
 		let new_item_id = hatUtils.getRandomHat(animal.dataValues.head_item_id, total_head_item_cnt);
 		await models.animal_possession.update({ head_item_id: new_item_id }, { where: { id: animal_id } });
-		res.status(201).send({ new_item_id: new_item_id });
+		let new_item = await models.head_item.findOne({
+			where: { id: new_item_id },
+		})
+		res.status(201).send({ new_item: new_item.dataValues.filename });
 	} catch (e) {
 		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
