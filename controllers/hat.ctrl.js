@@ -7,13 +7,13 @@ const hatUtils = require("../utils/hat.utils");
 exports.newHat = async function (req, res, next) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 
-	// let user_id = req.userId;
+	let user_id = req.userId;
 	let animal_id = req.body.animalId;
 	try {
 		let animal = await models.animal_possession.findOne({ where: { id: animal_id } });
-		// if (animal.dataValues.userId != user_id) {
-		// 	return res.status(400).send(errorMsg.notYourAnimal);
-		// }
+		if (animal.dataValues.userId != user_id) {
+			return res.status(400).send(errorMsg.notYourAnimal);
+		}
 		if (!animal.dataValues) {
 			return res.status(400).send(errorMsg.animalNotFound);
 		}
