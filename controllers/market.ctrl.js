@@ -48,22 +48,38 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 				},
 				{
 					model: models.animal_possession,
-					attributes: ['animal_type', 'name', 'color']
+					attributes: ['animal_type', 'name', 'color', 'head_item_id'],
+					include: [
+						{
+							model: models.animal,
+							attributes: ['type'],
+						},
+						{
+							model: models.head_item,
+							attributes: ['filename'],
+						}
+					]
 				}],
 			raw: true,
 			attributes: ["id", "price", "view_count", "description", "updatedAt"],
 		});
+		let result = [];
 		allAnimal.forEach(element => {
-			element.username = element["user.username"];
-			delete element["user.username"];
-			element.animal_type = element["animal_possession.animal_type"];
-			delete element["animal_possession.animal_type"];
-			element.animal_name = element["animal_possession.name"];
-			delete element["animal_possession.name"];
-			element.color = element["animal_possession.color"];
-			delete element["animal_possession.color"];
+			data = {
+				"id": element["id"],
+				"price": element["price"],
+				"view_count": element["view_count"],
+				"description": element["description"],
+				"updatedAt": element["updatedAt"],
+				"username": element["user.username"],
+				"animal_type": element["animal_possession.animal.type"],
+				"animal_name": element["animal_possession.name"],
+				"color": element["animal_possession.color"],
+				"head_item": element["animal_possession.head_item.filename"]
+			}
+			result.push(data);
 		});
-		res.status(200).send(allAnimal);
+		res.status(200).send(result);
 	} catch (e) {
 		logger.error(e);
 		res.status(500).send(errorMsg.internalServerError);
