@@ -31,6 +31,11 @@ module.exports = function (sequelize, DataTypes) {
 				allowNull: false,
 				default: 0,
 			},
+			egg: {
+				type: DataTypes.BIGINT,
+				allowNull: false,
+				default: 0,
+			},
 			deleted: {
 				type: DataTypes.BOOLEAN,
 				allowNull: false,
