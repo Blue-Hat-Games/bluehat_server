@@ -9,5 +9,6 @@ router.post("/edit-info", verifyToken, userCtrl.editUserInfo);
 router.get('/', verifyToken, userCtrl.getUserInfo);
 router.get('/get-coin', verifyToken, userCtrl.getUserCoin);
 router.post("/update-coin", verifyToken, userCtrl.updateUserCoin);
+router.post("/update-egg", verifyToken, userCtrl.updateUserEgg);
 
 module.exports = router;

@@ -30,6 +30,7 @@ exports.addUser = async (req, res) => {
 				login_type: "email",
 				deleted: 0,
 				coin: 0,
+				egg: 0,
 			}).then(user => {
 				register_result = {
 					msg: 'Register Success',
@@ -76,7 +77,7 @@ exports.getUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
 	try {
-		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "wallet_address", "email", "createdAt"] });
+		const user = await models.user.findOne({ where: { id: userId }, attributes: ["username", "coin", "egg", "wallet_address", "email", "createdAt"] });
 		const user_sell = await models.market.count({ where: { user_id: userId } });
 		if (user) {
 			let user_info = JSON.parse(JSON.stringify(user));
@@ -172,3 +173,21 @@ exports.updateUserCoin = async (req, res) => {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
+
+
+exports.updateUserEgg = async (req, res) => {
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const userId = req.userId;
+	const { egg } = req.body;
+	if (egg === undefined || userId === undefined) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	await models.user.increment({ egg: egg }, { where: { id: userId } })
+		.then(() => {
+			return res.status(200).send(infoMsg.success);
+		})
+		.catch((e) => {
+			logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
+			return res.status(500).send(errorMsg.internalServerError);
+		});
+}
