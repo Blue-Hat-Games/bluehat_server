@@ -119,6 +119,19 @@ exports.makeNewAnimal = async function (req, res, next) {
 		let animalPickIndex = Math.floor(Math.random() * allAnimalLength + 1);
 		let animal = await models.animal.findOne({ where: { id: animalPickIndex } });
 		let color = colorUtils.makeDefaultColor();
+		const user = await models.user.findOne({ where: { id: req.userId } });
+		if (!user) {
+			return res.status(400).send(errorMsg.userNotFound);
+		}
+		else {
+			if (user.egg <= 0) {
+				return res.status(400).send(errorMsg.notEnoughEgg);
+			}
+			else {
+				user.egg -= 1;
+				user.save();
+			}
+		}
 
 		await models.animal_possession
 			.create({

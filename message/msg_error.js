@@ -45,3 +45,7 @@ exports.animalNotFound = {
 exports.notYourAnimal = {
 	msg: "this animal is not yours"
 }
+
+exports.notEnoughEgg = {
+	msg: "not enough egg"
+}
