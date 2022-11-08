@@ -34,21 +34,21 @@ exports.synthesizeColor = async function (color1, color2, animal_type) {
 		for (let i = 0; i < COLOR_LENGTH; i++) {
 			rdm = Math.round(Math.random() * 100) % 3;
 			if (rdm == 0) { // 33% 확률로 color1의 색상을 가져옴
-				new_color[i].r = color1_json[i].r;
-				new_color[i].g = color1_json[i].g;
-				new_color[i].b = color1_json[i].b;
+				new_color[i].r = convertToPastelColor(color1_json[i].r);
+				new_color[i].g = convertToPastelColor(color1_json[i].g);
+				new_color[i].b = convertToPastelColor(color1_json[i].b);
 				new_color[i].a = 255;
 			}
 			else if (rdm == 1) { // 33% 확률로 color2의 색상을 가져옴
-				new_color[i].r = color2_json[i].r;
-				new_color[i].g = color2_json[i].g;
-				new_color[i].b = color2_json[i].b;
+				new_color[i].r = convertToPastelColor(color2_json[i].r);
+				new_color[i].g = convertToPastelColor(color2_json[i].g);
+				new_color[i].b = convertToPastelColor(color2_json[i].b);
 				new_color[i].a = 255;
 			}
 			else if (rdm == 2) { // 33% 확률로 랜덤 색상을 가져옴
-				new_color[i].r = (color1_json[i].r + color2_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
-				new_color[i].g = (color1_json[i].g + color2_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
-				new_color[i].b = (color1_json[i].b + color2_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
+				new_color[i].r = convertToPastelColor((color1_json[i].r + color2_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].g = convertToPastelColor((color1_json[i].g + color2_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].b = convertToPastelColor((color1_json[i].b + color2_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
 				new_color[i].a = 255;
 			}
 		}
@@ -66,9 +66,9 @@ exports.changeColor = async function (color, animal_type) {
 	while (true) {
 		new_color = COLOR_OBJ;
 		for (let i = 0; i < COLOR_LENGTH; i++) {
-			new_color[i].r = (color_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
-			new_color[i].g = (color_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
-			new_color[i].b = (color_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255;
+			new_color[i].r = convertToPastelColor((color_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+			new_color[i].g = convertToPastelColor((color_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+			new_color[i].b = convertToPastelColor((color_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
 			new_color[i].a = 255;
 		}
 		if (await checkDuplicateColor(JSON.stringify(new_color), animal_type))
@@ -78,4 +78,8 @@ exports.changeColor = async function (color, animal_type) {
 	}
 	return JSON.stringify(new_color);
 
+}
+
+convertToPastelColor = function (color) {
+	return (220 + Math.round(35 * (Number(color) / 255)));
 }
