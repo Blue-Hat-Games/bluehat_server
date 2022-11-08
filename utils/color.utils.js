@@ -81,5 +81,5 @@ exports.changeColor = async function (color, animal_type) {
 }
 
 convertToPastelColor = function (color) {
-	return (220 + Math.round(35 * (Number(color) / 255)));
+	return (180 + Math.round(75 * (Number(color) / 255)));
 }
