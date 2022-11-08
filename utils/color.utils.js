@@ -2,6 +2,8 @@ const models = require("../models");
 const COLOR_OBJ = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
 const COLOR_LENGTH = 16;
 const { Op } = require("sequelize");
+const PASTEL_MIN = 150;
+const EYE_COLOR = 10;
 
 async function checkDuplicateColor(color, animal_type) { //동일한 색 & 동일한 동물이 있는지 확인
 	await models.animal_possession.findOne({
@@ -32,23 +34,27 @@ exports.synthesizeColor = async function (color1, color2, animal_type) {
 	while (true) {
 		new_color = COLOR_OBJ;
 		for (let i = 0; i < COLOR_LENGTH; i++) {
+			if (i == COLOR_LENGTH - 1) {
+				new_color[i] = setEyeColor(new_color[i]);
+				break;
+			}
 			rdm = Math.round(Math.random() * 100) % 3;
-			if (rdm == 0) { // 33% 확률로 color1의 색상을 가져옴
-				new_color[i].r = convertToPastelColor(color1_json[i].r);
-				new_color[i].g = convertToPastelColor(color1_json[i].g);
-				new_color[i].b = convertToPastelColor(color1_json[i].b);
-				new_color[i].a = 255;
-			}
-			else if (rdm == 1) { // 33% 확률로 color2의 색상을 가져옴
-				new_color[i].r = convertToPastelColor(color2_json[i].r);
-				new_color[i].g = convertToPastelColor(color2_json[i].g);
-				new_color[i].b = convertToPastelColor(color2_json[i].b);
-				new_color[i].a = 255;
-			}
-			else if (rdm == 2) { // 33% 확률로 랜덤 색상을 가져옴
-				new_color[i].r = convertToPastelColor((color1_json[i].r + color2_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+			if (rdm == 0) { // 1/3 확률로 red centered pastel color 생성
+				new_color[i].r = convertToPastelColor(244 + Math.floor(Math.random() * 10));
 				new_color[i].g = convertToPastelColor((color1_json[i].g + color2_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
 				new_color[i].b = convertToPastelColor((color1_json[i].b + color2_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].a = 255;
+			}
+			else if (rdm == 1) { // 1/3 확률로 green centered pastel color 생성
+				new_color[i].r = convertToPastelColor((color1_json[i].r + color2_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].g = convertToPastelColor(244 + Math.floor(Math.random() * 10));
+				new_color[i].b = convertToPastelColor((color1_json[i].b + color2_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].a = 255;
+			}
+			else if (rdm == 2) { // 1/3 확률로 blue centered pastel color 생성
+				new_color[i].r = convertToPastelColor((color1_json[i].r + color2_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].g = convertToPastelColor((color1_json[i].g + color2_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].b = convertToPastelColor(244 + Math.floor(Math.random() * 10));
 				new_color[i].a = 255;
 			}
 		}
@@ -66,10 +72,30 @@ exports.changeColor = async function (color, animal_type) {
 	while (true) {
 		new_color = COLOR_OBJ;
 		for (let i = 0; i < COLOR_LENGTH; i++) {
-			new_color[i].r = convertToPastelColor((color_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
-			new_color[i].g = convertToPastelColor((color_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
-			new_color[i].b = convertToPastelColor((color_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
-			new_color[i].a = 255;
+			if (i == COLOR_LENGTH - 1) {
+				new_color[i] = setEyeColor(new_color[i]);
+				console.log("NC:", new_color[i]);
+				break;
+			}
+			rdm = Math.round(Math.random() * 100) % 3;
+			if (rdm == 0) { // 1/3 확률로 red centered pastel color로 변경
+				new_color[i].r = convertToPastelColor(244 + Math.floor(Math.random() * 10));
+				new_color[i].g = convertToPastelColor((color_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].b = convertToPastelColor((color_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].a = 255;
+			}
+			else if (rdm == 1) { // 1/3 확률로 green centered pastel color로 변경
+				new_color[i].r = convertToPastelColor((color_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].g = convertToPastelColor(244 + Math.floor(Math.random() * 10));
+				new_color[i].b = convertToPastelColor((color_json[i].b + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].a = 255;
+			}
+			else if (rdm == 2) { // 1/3 확률로 blue centered pastel color로 변경
+				new_color[i].r = convertToPastelColor((color_json[i].r + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].g = convertToPastelColor((color_json[i].g + Math.round(Math.floor(Math.random() * 256)) % 255) % 255);
+				new_color[i].b = convertToPastelColor(244 + Math.floor(Math.random() * 10));
+				new_color[i].a = 255;
+			}
 		}
 		if (await checkDuplicateColor(JSON.stringify(new_color), animal_type))
 			continue;
@@ -81,5 +107,13 @@ exports.changeColor = async function (color, animal_type) {
 }
 
 convertToPastelColor = function (color) {
-	return (220 + Math.round(35 * (Number(color) / 255)));
+	return (PASTEL_MIN + Math.round((255 - PASTEL_MIN) * (Number(color) / 255)));
+}
+
+setEyeColor = function (colorSet) {
+	colorSet.r = EYE_COLOR;
+	colorSet.g = EYE_COLOR;
+	colorSet.b = EYE_COLOR;
+	colorSet.a = 255;
+	return colorSet;
 }
