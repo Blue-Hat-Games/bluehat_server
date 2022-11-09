@@ -166,7 +166,7 @@ exports.makeNewAnimal = async function (req, res, next) {
 				nft_hash: null,
 				color: color,
 				name: animalNameArray[Math.floor(Math.random() * animalNameArray.length)],
-				tier: 1,
+				tier: 5,
 				user_id: req.userId,
 				animal_type: animal.id,
 				head_item_id: 1,
