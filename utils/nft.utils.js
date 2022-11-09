@@ -3,6 +3,7 @@ var express = require("express");
 var router = express.Router();
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
+var axios = require('axios');
 
 // Default Acess Key Setting
 const config = require("./config");
@@ -10,24 +11,28 @@ const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 const authorization = config.authorization;
 const sellerPrivateKey = config.sellerPrivateKey;
-const klaytnWalletKey = config.klaytnWalletKey;
-const caver = config.caver;
 const logger = require("../config/logger");
 const { promisify } = require("util");
 const { verify } = require("crypto");
+const caver = config.caver;
+
+
 
 var newID = function () {
 	return Math.random().toString(36).substr(2, 16);
 };
 
+
 exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	try {
-		const keyring = caver.wallet.keyring.createFromKlaytnWalletKey(klaytnWalletKey);
+		const keyring = caver.wallet.keyring.createFromKlaytnWalletKey(sellerPrivateKey);
+
 		if (!caver.wallet.getKeyring(keyring.address)) {
 			const singleKeyRing =
-				caver.wallet.keyring.createFromKlaytnWalletKey(klaytnWalletKey);
+				caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
 			caver.wallet.add(singleKeyRing);
 		}
+
 		let kip17 = await caver.kct.kip17.deploy(
 			{
 				name: title,
@@ -66,7 +71,6 @@ exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 
 exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, receiverAddr) {
 	try {
-
 		// Based on privateKey, get Keyring
 		const senderKeyring = caver.wallet.keyring.createFromPrivateKey(
 			customerPrivateKey
@@ -121,4 +125,37 @@ exports.uploadIpfsMeta = async function (imgHash) {
 	});
 	const json_file_hash = await addFile(Buffer.from(json_result));
 	return "https://ipfs.io/ipfs/" + json_file_hash[0].hash;
+}
+
+exports.getKeyring = async function () {
+	// create new Keyring
+	const keyring = caver.wallet.keyring.generate()
+	if (keyring) {
+		const result = {
+			"address": keyring._address,
+			"privateKey": keyring._key._privateKey,
+			"klaytnWalletKey": keyring._key._privateKey + "0x00" + keyring._address
+		}
+		return result
+	}
+	else {
+		new Error("Can't Create New Addr")
+	}
+}
+
+exports.faucetKlay = function (address) {
+	// faucet 150 klay
+	var config = {
+		method: 'post',
+		url: 'https://api-baobab.wallet.klaytn.com/faucet/run?address=' + address,
+		headers: {}
+	};
+
+	axios(config)
+		.then(function (response) {
+			console.log(JSON.stringify(response.data));
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
 }
