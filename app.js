@@ -13,6 +13,7 @@ var authRouter = require("./routes/auth");
 var animalRouter = require("./routes/animal");
 var marketRouter = require("./routes/market");
 var hatRouter = require("./routes/hat");
+var walletRouter = require("./routes/wallet");
 const logger = require("./config/logger");
 var app = express();
 
@@ -43,6 +44,7 @@ app.use("/auth", authRouter);
 app.use('/animal', animalRouter);
 app.use('/market', marketRouter);
 app.use('/hat', hatRouter);
+app.use('/wallet', walletRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
