@@ -118,13 +118,13 @@ exports.uploadIpfsImg = async function (img) {
 exports.uploadIpfsMeta = async function (imgHash) {
 	const addFile = promisify(ipfs.files.add);
 	json_result = JSON.stringify({
-		"image": "https://ipfs.io/ipfs/" + imgHash,
+		"image": "ipfs://" + imgHash,
 		"description": "The bluehat animals are unique and randomly generated Bluehat. Not only that, Welcome to join us the bluehat society.",
 		"name": "Bluehat Animal",
 		"attributes": []
 	});
 	const json_file_hash = await addFile(Buffer.from(json_result));
-	return "https://ipfs.io/ipfs/" + json_file_hash[0].hash;
+	return "ipfs://" + json_file_hash[0].hash;
 }
 
 exports.getKeyring = async function () {
