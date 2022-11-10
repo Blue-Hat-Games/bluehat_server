@@ -108,8 +108,8 @@ exports.makeNFT = async function (req, res) {
 			token_id: nftMintResult['events']['Transfer']['returnValues']['tokenId'],
 			ipfs_addr: tokenURL,
 			contract_addr: nftMintResult['events']['Transfer']['address'],
-		}).then(async (nft) => {
-			await models.animal_possession.update({ nft_id: nft['id'] }, { where: { id: animal_id } });
+		}).then(async (newNft) => {
+			await models.animal_possession.update({ nft_id: newNft.id }, { where: { id: animal_id } });
 			return res.status(200).send(infoMsg.success);
 		});
 	} catch (e) {
