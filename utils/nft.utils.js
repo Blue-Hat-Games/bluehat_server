@@ -136,6 +136,7 @@ exports.tradeNftByOperator = async function (contractAddr, tokenId, receiverAddr
 			});
 
 	} catch (e) {
+		logger.error(e);
 		new Error(e);
 	}
 }
