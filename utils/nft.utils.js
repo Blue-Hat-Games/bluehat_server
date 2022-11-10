@@ -127,9 +127,6 @@ exports.tradeNftByOperator = async function (contractAddr, tokenId, receiverAddr
 
 		// Transfer NFT
 		kip17.safeTransferFrom(sellerAddr, receiverAddr, tokenId, { from: operatorKeyring.address })
-			.error((e) => {
-				logger.error(e);
-			})
 			.then((result) => {
 				logger.info(result);
 				return true;
