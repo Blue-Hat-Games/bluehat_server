@@ -135,7 +135,6 @@ exports.makeNewAnimal = async function (req, res, next) {
 
 		await models.animal_possession
 			.create({
-				nft_hash: null,
 				color: color,
 				name: "testAnimal",
 				tier: 1,
