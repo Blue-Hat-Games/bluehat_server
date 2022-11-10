@@ -218,7 +218,8 @@ exports.buyAnimalfromMarket = async function (req, res) {
 		}
 
 		// Trade NFT by Operator
-		const nftInfo = await models.nft.findOne({ where: { id: animal.animal_possession.nft_id } });
+		const animalInfo = await models.animal_possession.findOne({ where: { id: animal.animal_possession_id } });
+		const nftInfo = await models.nft.findOne({ where: { id: animalInfo.nft_id } });
 		let tradeResult = nftUtils.tradeNftByOperator(nftInfo.contract_addr, nftInfo.token_id, buy_user.wallet_address, seller.wallet_address);
 		if (!tradeResult) {
 			new Error("tradeNftByOperator error");
