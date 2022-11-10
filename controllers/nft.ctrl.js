@@ -164,9 +164,11 @@ exports.makeNFT = async function (req, res) {
 	*/
 	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
+		let { animal_id, wallet_address } = req.body;
 		let imgHash = await nftUtils.uploadIpfsImg(req.file);
 		let tokenURL = await nftUtils.uploadIpfsMeta(imgHash);
-		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = req.body.wallet_address);
+		let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = wallet_address);
+		models.animal_possession.update({ nft_hash: nftMintResult['transactionHash'], ipfs_addr: tokenURL }, { where: { id: animal_id } });
 		return res.status(200).send(nftMintResult);
 	} catch (e) {
 		console.log(e);
