@@ -70,113 +70,76 @@ exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	return mintResult
 };
 
-exports.approveToSendNft = async function (sellerPrivateKey, contractAddr, tokenId) {
-
-	// Based on privateKey, get Keyring
-	const senderKeyring = caver.wallet.keyring.createFromPrivateKey(
-		sellerPrivateKey
-	);
-
-	if (!caver.wallet.getKeyring(senderKeyring.address)) {
-		const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
+exports.approveToOperator = async function (sellerPrivateKey, contractAddr, tokenId) {
+	try {
+		// Get Seller Keyring
+		const senderKeyring = caver.wallet.keyring.createFromPrivateKey(
 			sellerPrivateKey
 		);
-		caver.wallet.add(singleKeyRing);
-	}
 
-	const operatorKeyring = caver.wallet.keyring.createFromPrivateKey(
-		operatorPrivateKey
-	);
-
-	if (!caver.wallet.getKeyring(operatorKeyring.address)) {
-		const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
-			operatorPrivateKey
-		);
-		caver.wallet.add(singleKeyRing);
-	}
-
-
-	// Get Kip17 Contract Instance
-	const kip17 = new caver.kct.kip17(contractAddr);
-	kip17.name().then(console.log)
-	kip17.symbol().then(console.log)
-	kip17.ownerOf(tokenId).then((result) => {
-		console.log("owner" + result);
-	});
-	kip17.getApproved(tokenId).then((r) => {
-		console.log("approved" + r);
-	});
-
-	kip17.approve(operatorKeyring.address, tokenId, { from: senderKeyring.address }).then(console.log).then(
-		console.log("approve success")
-	);
-
-	return "ok";
-}
-
-exports.sendNFTUsingMiddleware = async function (contractAddr, tokenId, receiverAddr, sellerAddr) {
-	const operatorKeyring = caver.wallet.keyring.createFromKlaytnWalletKey(operatorPrivateKey);
-
-	if (!caver.wallet.getKeyring(operatorKeyring.address)) {
-		const singleKeyRing =
-			caver.wallet.keyring.createFromPrivateKey(operatorPrivateKey);
-		caver.wallet.add(singleKeyRing);
-	}
-	// Get Kip17 Contract Instance
-	const kip17 = new caver.kct.kip17(contractAddr);
-	kip17.ownerOf(tokenId).then((result) => {
-		console.log("owner " + result);
-	});
-	kip17.getApproved(tokenId).then((r) => {
-		console.log("approved " + r);
-		console.log("operator " + operatorKeyring.address);
-	});
-	kip17.safeTransferFrom(sellerAddr, receiverAddr, tokenId, { from: operatorKeyring.address }).then(
-		console.log("send success")
-	)
-	return "ok";
-}
-
-exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, receiverAddr) {
-	try {
-		// Based on privateKey, get Keyring
-		const senderKeyring = caver.wallet.keyring.createFromPrivateKey(
-			customerPrivateKey
-		);
-
-		// if wallet doesn't have this keyring, add it
 		if (!caver.wallet.getKeyring(senderKeyring.address)) {
 			const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
-				customerPrivateKey
+				sellerPrivateKey
+			);
+			caver.wallet.add(singleKeyRing);
+		}
+
+		// Get Operator Keyring
+		const operatorKeyring = caver.wallet.keyring.createFromPrivateKey(
+			operatorPrivateKey
+		);
+
+		if (!caver.wallet.getKeyring(operatorKeyring.address)) {
+			const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
+				operatorPrivateKey
 			);
 			caver.wallet.add(singleKeyRing);
 		}
 
 		// Get Kip17 Contract Instance
 		const kip17 = new caver.kct.kip17(contractAddr);
+		kip17.approve(operatorKeyring.address, tokenId, { from: senderKeyring.address }).error((e) => {
+			logger.error(e);
+		}).then((result) => {
+			logger.info(result);
+			return true;
+		});
 
-		let transferResult = await kip17.transferFrom(
-			senderKeyring.address,
-			receiverAddr,
-			tokenId,
-			{ from: senderKeyring.address, gas: 200000 }
-		);
-
-		if (transferResult === null) {
-			throw new Error("transfer failed")
-		}
-		else {
-			logger.info('transferResult', transferResult);
-			return transferResult;
-		}
-	}
-	catch (e) {
-		logger.error(e)
-		logger.info(`${req.method} ${req.originalUrl}`);
-		return "err";
+	} catch (e) {
+		new Error(e);
 	}
 
-};
+}
+
+exports.tradeNftByOperator = async function (contractAddr, tokenId, receiverAddr, sellerAddr) {
+	try {
+		// Get Operator Keyring
+		const operatorKeyring = caver.wallet.keyring.createFromKlaytnWalletKey(operatorPrivateKey);
+
+		if (!caver.wallet.getKeyring(operatorKeyring.address)) {
+			const singleKeyRing =
+				caver.wallet.keyring.createFromPrivateKey(operatorPrivateKey);
+			caver.wallet.add(singleKeyRing);
+		}
+
+		// Get Kip17 Contract Instance
+		const kip17 = new caver.kct.kip17(contractAddr);
+
+		// Transfer NFT
+		kip17.safeTransferFrom(sellerAddr, receiverAddr, tokenId, { from: operatorKeyring.address })
+			.error((e) => {
+				logger.error(e);
+			})
+			.then((result) => {
+				logger.info(result);
+				return true;
+			});
+
+	} catch (e) {
+		new Error(e);
+	}
+}
+
 
 exports.uploadIpfsImg = async function (img) {
 	const addFile = promisify(ipfs.files.add);
