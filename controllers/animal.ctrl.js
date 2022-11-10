@@ -5,6 +5,34 @@ const logger = require("../config/logger");
 const colorUtils = require("../utils/color.utils");
 const nftUtils = require('../utils/nft.utils');
 const { Op } = require("sequelize");
+const animalNameArray = [
+	"Pinky",
+	"Poco",
+	"Peppi",
+	"Poppy",
+	"Riley",
+	"Rollo",
+	"Ruby",
+	"Roy",
+	"Abel",
+	"Asha",
+	"Baba",
+	"Allie",
+	"Buddy",
+	"Cara",
+	"Casey",
+	"Bessie",
+	"Coco",
+	"Connie",
+	"Colin",
+	"Cookie",
+	"Coy",
+	"Cindy",
+	"Colin",
+	"Cutie",
+	"Fella",
+	"Kyle"];
+
 
 exports.getUserAnimal = async function (req, res, next) {
 	logger.info(`${req.method} ${req.originalUrl}`);
@@ -136,8 +164,8 @@ exports.makeNewAnimal = async function (req, res, next) {
 		await models.animal_possession
 			.create({
 				color: color,
-				name: "testAnimal",
-				tier: 1,
+				name: animalNameArray[Math.floor(Math.random() * animalNameArray.length)],
+				tier: 5,
 				user_id: req.userId,
 				animal_type: animal.id,
 				head_item_id: 1,
