@@ -6,7 +6,8 @@ const logger = require("../config/logger");
 const { Op } = require("sequelize");
 const nftUtils = require("../utils/nft.utils");
 
-exports.getAllMarketAnimal = async function (req, res, next) {
+// Show Market Animl
+exports.getAllMarketAnimal = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 
 	// Setting Default
@@ -86,68 +87,7 @@ exports.getAllMarketAnimal = async function (req, res, next) {
 	}
 };
 
-exports.tradeAnimal = async function (req, res, next) {
-	logger.info(`${req.method} ${req.originalUrl}`);
-	if (!req.body.animal_id || !req.body.user_id) {
-		return res.status(400).send(errorMsg.needParameter);
-	}
-	const tr = await sequelize.transaction();
-	try {
-		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id } }, { transaction: tr });
-		if (!animal) {
-			return res.status(400).send(errorMsg.animalNotFound);
-		}
-		let possessionUser = await models.user.findOne({ where: { id: animal["user_id"] } }, { transaction: tr }); // 소유자 검색
-
-		//개발용 유저 사용
-		possessionUser = "";
-		const senderPrivateKey = ""; //테스트 개발용 임시 PrivateKey 사용
-		await tr.commit();
-	} catch (e) {
-		logger.error(e);
-		await tr.rollback();
-		res.status(500).send(errorMsg.internalServerError);
-	}
-};
-
-exports.sellAnimaltoMarket = async function (req, res, next) {
-	logger.info(`${req.method} ${req.originalUrl}`);
-	const { animal_id, price, seller_private_key } = req.body;
-	if (!animal_id || !price || !seller_private_key) {
-		return res.status(400).send(errorMsg.needParameter);
-	}
-	const tr = await sequelize.transaction();
-	try {
-		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
-		if (!animal) {
-			return res.status(400).send(errorMsg.animalNotFound);
-		}
-		if (!animal.nft_hash) {
-			result = {
-				"status": "fail",
-				"msg": "Don't have NFT animal"
-			}
-			return res.status(400).send(result);
-		}
-		let sellAnimal = await models.market.create({
-			animal_possession_id: animal_id,
-			price: price,
-			seller_private_key: seller_private_key,
-			contract_address: "",
-			token_id: "",
-			user_id: req.userId,
-			view_count: 0,
-		}, { transaction: tr });
-		await tr.commit();
-		return res.status(200).send(infoMsg.success);
-	} catch (e) {
-		logger.error(e);
-		await tr.rollback();
-		res.status(500).send(errorMsg.internalServerError);
-	}
-};
-
-exports.getMarketAnimalCounts = async function (req, res, next) {
+exports.getMarketAnimalCounts = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		let count = await models.market.count();
@@ -164,9 +104,8 @@ exports.getMarketAnimalCounts = async function (req, res, next) {
 	}
 };
 
-exports.getMarketAnimalDetail = async function (req, res, next) {
+exports.getMarketAnimalDetail = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
-	//req.query.id = market.id
 	if (!req.query.id) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
@@ -202,50 +141,50 @@ exports.getMarketAnimalDetail = async function (req, res, next) {
 			}
 		}
 		models.market.increment('view_count', { where: { id: req.query.id } });
-
 		return res.status(200).send(result);
-
-
 	} catch (e) {
 		logger.error(e);
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
 
-exports.buyAnimalfromMarket = async function (req, res, next) {
+
+// Sell Market Animal
+exports.sellAnimaltoMarket = async function (req, res, next) {
 	logger.info(`${req.method} ${req.originalUrl}`);
-	const buy_animal_id = req.body.buy_animal_id;
-	if (!buy_animal_id) {
+	const { animal_id, price, seller_private_key } = req.body;
+	if (!animal_id || !price || !seller_private_key) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
 	const tr = await sequelize.transaction();
 	try {
-		const buy_user = await models.user.findOne({ where: { id: req.userId } });
-		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
-		if (buy_user.id == animal.user_id) {
+		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
+		if (!animal) {
+			return res.status(400).send(errorMsg.animalNotFound);
+		}
+		if (!animal.nft_id) {
 			result = {
 				"status": "fail",
-				"msg": "You can't buy your own animal"
+				"msg": "Don't have NFT animal"
 			}
-			return res.status(200).send(result);
+			return res.status(400).send(result);
 		}
-		if (animal.price <= buy_user.coin) {
-			await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } }, { transaction: tr });
-			const seller = await models.user.findOne({ where: { id: animal.user_id } });
-			await models.user.updaate({ coin: seller.coin + animal.price }, { where: { id: animal.user_id } }, { transaction: tr });
-			await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id }, transaction: tr });
-			await models.market.destroy({ where: { id: buy_animal_id } }, { transaction: tr });
-			await tr.commit();
-			return res.status(200).send(infoMsg.success);
+		let nftInfo = await models.nft.findOne({ where: { id: animal.nft_id } }, { transaction: tr });
+		// approve NFT to Operator
+		let approve = await nftUtils.approveToOperator(seller_private_key, nftInfo.contract_addr, nftInfo.token_id);
+		if (!approve) {
+			new Error("approveToOperator error");
 		}
-		else {
-			result = {
-				"status": "fail",
-				"msg": "Not Enough Coin"
-			}
-			await tr.commit();
-			return res.status(200).send(result)
-		}
+		// upload to market
+		await models.market.create({
+			price: price,
+			view_count: 0,
+			description: "This Animal Is NFT Animal",
+			animal_possession_id: animal_id,
+			user_id: req.userId,
+		}, { transaction: tr });
+		await tr.commit();
+		return res.status(200).send(infoMsg.success);
 	} catch (e) {
 		logger.error(e);
 		await tr.rollback();
@@ -253,31 +192,49 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 	}
 };
 
-exports.testNftTrade = async function (req, res, next) {
+
+// Buy Market Animal
+exports.buyAnimalfromMarket = async function (req, res) {
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const { buy_animal_id } = req.body;
+	if (!buy_animal_id) {
+		return res.status(400).send(errorMsg.needParameter);
+	}
+	const tr = await sequelize.transaction();
 	try {
-		logger.info(`${req.method} ${req.originalUrl}`);
-		const nftResult = await nftUtils.tradeNft(req.body.customerPrivateKey, req.body.contractAddr, req.body.tokenId, req.body.receiverAddr)
-		res.status(200).send(nftResult)
-	} catch {
+		const buy_user = await models.user.findOne({ where: { id: req.userId } });
+		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
+		const seller = await models.user.findOne({ where: { id: animal.user_id } });
+		if (buy_user.id == animal.user_id) {
+			return res.status(401).send(errorMsg.cannotBuyYourAnimal);
+		}
+		if (animal.price > buy_user.coin) {
+			await tr.commit();
+			return res.status(401).send(errorMsg.notEnoughCoin)
+		}
+		if (buy_user.wallet_address == null) {
+			await tr.rollback();
+			return res.status(401).send(errorMsg.needWalletAddress);
+		}
+
+		// Trade NFT by Operator
+		const nftInfo = await models.nft.findOne({ where: { id: animal.animal_possession.nft_id } });
+		let tradeResult = nftUtils.tradeNftByOperator(nftInfo.contract_addr, nftInfo.token_id, buy_user.wallet_address, seller.wallet_address);
+		if (!tradeResult) {
+			new Error("tradeNftByOperator error");
+		}
+
+		// Set Animal Update
+		await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } }, { transaction: tr });
+		await models.user.update({ coin: seller.coin + animal.price }, { where: { id: animal.user_id } }, { transaction: tr });
+		await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id }, transaction: tr });
+		await models.market.destroy({ where: { id: buy_animal_id } }, { transaction: tr });
+
+		await tr.commit();
+		return res.status(200).send(infoMsg.success);
+	} catch (e) {
+		logger.error(e);
+		await tr.rollback();
 		res.status(500).send(errorMsg.internalServerError);
 	}
-
 };
-
-
-exports.testKIP17Trade = async function (req, res, next) {
-
-	logger.info(`${req.method} ${req.originalUrl}`);
-	const { sellerPrivateKey, contractAddr, tokenId } = req.body;
-	const kip17Result = await nftUtils.approveToSendNft(sellerPrivateKey, contractAddr, tokenId);
-	res.status(200).send(kip17Result)
-
-}
-
-exports.sendToBuyUser = async function (req, res, next) {
-
-	logger.info(`${req.method} ${req.originalUrl}`);
-	const { contractAddr, tokenId, receiverAddr, sellerAddr } = req.body;
-	const kip17Result = await nftUtils.sendNFTUsingMiddleware(contractAddr, tokenId, receiverAddr, sellerAddr);
-	res.status(200).send(kip17Result)
-}

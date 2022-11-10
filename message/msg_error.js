@@ -49,3 +49,13 @@ exports.notYourAnimal = {
 exports.notEnoughEgg = {
 	msg: "not enough egg"
 }
+
+exports.cannotBuyYourAnimal = {
+	status: "fail",
+	msg: "You can't buy your own animal"
+}
+
+exports.needWalletAddress = {
+	status: "fail",
+	msg: "You need to set your wallet address"
+}
