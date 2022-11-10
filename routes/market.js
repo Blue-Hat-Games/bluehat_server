@@ -9,5 +9,7 @@ router.get("/counts", marketCtrl.getMarketAnimalCounts);
 router.get('/detail', marketCtrl.getMarketAnimalDetail);
 router.post("/buy", verifyToken, marketCtrl.buyAnimalfromMarket);
 router.post("/trade-nft", marketCtrl.testNftTrade);
+router.post("/test", marketCtrl.testKIP17Trade)
+router.post("/test2", marketCtrl.sendToBuyUser)
 
 module.exports = router;
