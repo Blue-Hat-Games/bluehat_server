@@ -10,10 +10,11 @@ const config = require("./config");
 const accessKeyId = config.accessKeyId;
 const secretAccessKey = config.secretAccessKey;
 const authorization = config.authorization;
-const sellerPrivateKey = config.sellerPrivateKey;
+const operatorPrivateKey = config.operatorPrivateKey;
 const logger = require("../config/logger");
 const { promisify } = require("util");
 const { verify } = require("crypto");
+const { token } = require("morgan");
 const caver = config.caver;
 
 
@@ -25,11 +26,11 @@ var newID = function () {
 
 exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	try {
-		const keyring = caver.wallet.keyring.createFromKlaytnWalletKey(sellerPrivateKey);
+		const keyring = caver.wallet.keyring.createFromKlaytnWalletKey(operatorPrivateKey);
 
 		if (!caver.wallet.getKeyring(keyring.address)) {
 			const singleKeyRing =
-				caver.wallet.keyring.createFromPrivateKey(sellerPrivateKey);
+				caver.wallet.keyring.createFromPrivateKey(operatorPrivateKey);
 			caver.wallet.add(singleKeyRing);
 		}
 
@@ -69,6 +70,73 @@ exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	return mintResult
 };
 
+exports.approveToSendNft = async function (sellerPrivateKey, contractAddr, tokenId) {
+
+	// Based on privateKey, get Keyring
+	const senderKeyring = caver.wallet.keyring.createFromPrivateKey(
+		sellerPrivateKey
+	);
+
+	if (!caver.wallet.getKeyring(senderKeyring.address)) {
+		const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
+			sellerPrivateKey
+		);
+		caver.wallet.add(singleKeyRing);
+	}
+
+	const operatorKeyring = caver.wallet.keyring.createFromPrivateKey(
+		operatorPrivateKey
+	);
+
+	if (!caver.wallet.getKeyring(operatorKeyring.address)) {
+		const singleKeyRing = caver.wallet.keyring.createFromPrivateKey(
+			operatorPrivateKey
+		);
+		caver.wallet.add(singleKeyRing);
+	}
+
+
+	// Get Kip17 Contract Instance
+	const kip17 = new caver.kct.kip17(contractAddr);
+	kip17.name().then(console.log)
+	kip17.symbol().then(console.log)
+	kip17.ownerOf(tokenId).then((result) => {
+		console.log("owner" + result);
+	});
+	kip17.getApproved(tokenId).then((r) => {
+		console.log("approved" + r);
+	});
+
+	kip17.approve(operatorKeyring.address, tokenId, { from: senderKeyring.address }).then(console.log).then(
+		console.log("approve success")
+	);
+
+	return "ok";
+}
+
+exports.sendNFTUsingMiddleware = async function (contractAddr, tokenId, receiverAddr, sellerAddr) {
+	const operatorKeyring = caver.wallet.keyring.createFromKlaytnWalletKey(operatorPrivateKey);
+
+	if (!caver.wallet.getKeyring(operatorKeyring.address)) {
+		const singleKeyRing =
+			caver.wallet.keyring.createFromPrivateKey(operatorPrivateKey);
+		caver.wallet.add(singleKeyRing);
+	}
+	// Get Kip17 Contract Instance
+	const kip17 = new caver.kct.kip17(contractAddr);
+	kip17.ownerOf(tokenId).then((result) => {
+		console.log("owner " + result);
+	});
+	kip17.getApproved(tokenId).then((r) => {
+		console.log("approved " + r);
+		console.log("operator " + operatorKeyring.address);
+	});
+	kip17.safeTransferFrom(sellerAddr, receiverAddr, tokenId, { from: operatorKeyring.address }).then(
+		console.log("send success")
+	)
+	return "ok";
+}
+
 exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, receiverAddr) {
 	try {
 		// Based on privateKey, get Keyring
@@ -93,6 +161,7 @@ exports.tradeNft = async function (customerPrivateKey, contractAddr, tokenId, re
 			tokenId,
 			{ from: senderKeyring.address, gas: 200000 }
 		);
+
 		if (transferResult === null) {
 			throw new Error("transfer failed")
 		}
@@ -127,8 +196,9 @@ exports.uploadIpfsMeta = async function (imgHash) {
 	return "ipfs://" + json_file_hash[0].hash;
 }
 
+// create new Klaytn account
 exports.getKeyring = async function () {
-	// create new Keyring
+
 	const keyring = caver.wallet.keyring.generate()
 	if (keyring) {
 		const result = {
@@ -143,8 +213,8 @@ exports.getKeyring = async function () {
 	}
 }
 
+// this function faucet 150 KLAY to new account
 exports.faucetKlay = function (address) {
-	// faucet 150 klay
 	var config = {
 		method: 'post',
 		url: 'https://api-baobab.wallet.klaytn.com/faucet/run?address=' + address,

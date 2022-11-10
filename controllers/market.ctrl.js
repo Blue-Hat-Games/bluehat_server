@@ -230,8 +230,10 @@ exports.buyAnimalfromMarket = async function (req, res, next) {
 			return res.status(200).send(result);
 		}
 		if (animal.price <= buy_user.coin) {
-			const result = await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } }, { transaction: tr });
-			const result2 = await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id }, transaction: tr });
+			await models.user.update({ coin: buy_user.coin - animal.price }, { where: { id: req.userId } }, { transaction: tr });
+			const seller = await models.user.findOne({ where: { id: animal.user_id } });
+			await models.user.updaate({ coin: seller.coin + animal.price }, { where: { id: animal.user_id } }, { transaction: tr });
+			await models.animal_possession.update({ user_id: req.userId }, { where: { id: animal.animal_possession_id }, transaction: tr });
 			await models.market.destroy({ where: { id: buy_animal_id } }, { transaction: tr });
 			await tr.commit();
 			return res.status(200).send(infoMsg.success);
@@ -261,3 +263,21 @@ exports.testNftTrade = async function (req, res, next) {
 	}
 
 };
+
+
+exports.testKIP17Trade = async function (req, res, next) {
+
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const { sellerPrivateKey, contractAddr, tokenId } = req.body;
+	const kip17Result = await nftUtils.approveToSendNft(sellerPrivateKey, contractAddr, tokenId);
+	res.status(200).send(kip17Result)
+
+}
+
+exports.sendToBuyUser = async function (req, res, next) {
+
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const { contractAddr, tokenId, receiverAddr, sellerAddr } = req.body;
+	const kip17Result = await nftUtils.sendNFTUsingMiddleware(contractAddr, tokenId, receiverAddr, sellerAddr);
+	res.status(200).send(kip17Result)
+}

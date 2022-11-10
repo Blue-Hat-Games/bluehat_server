@@ -12,23 +12,11 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            seller_private_key:{
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            token_id:{
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            contract_address:{
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            view_count:{
+            view_count: {
                 type: DataTypes.INTEGER,
                 default: 0,
             },
-            description:{
+            description: {
                 type: DataTypes.STRING,
             }
         },

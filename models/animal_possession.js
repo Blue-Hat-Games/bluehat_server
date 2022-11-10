@@ -8,10 +8,6 @@ module.exports = function (sequelize, DataTypes) {
 				primaryKey: true,
 				autoIncrement: true,
 			},
-			nft_hash: {
-				type: DataTypes.STRING,
-				allowNull: true,
-			},
 			color: {
 				type: DataTypes.STRING(1023),
 				allowNull: true,
@@ -24,10 +20,6 @@ module.exports = function (sequelize, DataTypes) {
 				type: DataTypes.TINYINT,
 				allowNull: false,
 			},
-			ipfs_addr: {
-				type: DataTypes.STRING,
-				allowNull: true,
-			}
 		},
 		{
 			sequelize,
@@ -53,6 +45,12 @@ module.exports = function (sequelize, DataTypes) {
 		animal_possession.belongsTo(models.pattern, {
 			foreignKey: "pattern_id",
 			targetKey: "id"
+		})
+		animal_possession.belongsTo(models.nft, {
+			foreignKey: "nft_id",
+			targetKey: "id",
+			allowNull: true,
+			default: null
 		})
 		animal_possession.hasMany(models.market, {
 			foreignKey: "animal_possession_id",
