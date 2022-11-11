@@ -46,12 +46,12 @@ exports.getUserQuest = async function (req, res) {
             order: [order],
         });
         let questResult = {
-            type: userQuest.quest.type,
-            title: userQuest.quest.title,
-            description: userQuest.quest.description,
-            action: userQuest.quest.action,
-            reward_coin: userQuest.quest.reward_coin,
-            reward_egg: userQuest.quest.reward_egg,
+            type: userQuest['quest.type'],
+            title: userQuest['quest.title'],
+            description: userQuest['quest.description'],
+            action: userQuest['quest.action'],
+            reward_coin: userQuest['quest.reward_coin'],
+            reward_egg: userQuest['quest.reward_egg'],
             status: userQuest.status,
             get_reward: userQuest.get_reward,
             createdAt: userQuest.createdAt,
