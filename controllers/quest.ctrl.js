@@ -60,7 +60,10 @@ exports.getUserQuest = async function (req, res) {
             }
             questResultList.push(data);
         });
-        return res.status(200).send(questResultList);
+        let result = {
+            "quests": questResultList
+        }
+        return res.status(200).send(result);
     } catch (e) {
         logger.error(e);
         return res.status(500).send(errorMsg.internalServerError);
