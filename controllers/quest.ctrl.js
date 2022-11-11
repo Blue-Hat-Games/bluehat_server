@@ -71,7 +71,7 @@ exports.getUserQuestCount = async function (req, res) {
     }
 };
 
-exports.completQuest = async function (req, res) {
+exports.completeQuest = async function (req, res) {
     logger.info(`${req.method} ${req.originalUrl}`);
     try {
         const { quest_id } = req.body;
