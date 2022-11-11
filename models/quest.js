@@ -32,7 +32,7 @@ module.exports = function (sequelize, DataTypes) {
             foreignKey: "quest_id",
             sourceKey: "id",
         });
-        quest.belongTo(models.quest_reward, {
+        quest.belongsTo(models.quest_reward, {
             foreignKey: "reward_id",
             targetKey: "id",
         });

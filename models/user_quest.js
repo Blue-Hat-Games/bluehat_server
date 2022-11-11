@@ -9,11 +9,11 @@ module.exports = function (sequelize, DataTypes) {
                 autoIncrement: true,
             },
             status: {
-                type: DataTypes.Boolean,
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
             },
             get_reward: {
-                type: DataTypes.Boolean,
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
             }
         },
@@ -24,11 +24,11 @@ module.exports = function (sequelize, DataTypes) {
         }
     );
     user_quest.associate = (models) => {
-        user_quest.belongTo(models.user, {
+        user_quest.belongsTo(models.user, {
             foreignKey: "user_id",
             targetKey: "id"
         })
-        user_quest.belongTo(models.quest, {
+        user_quest.belongsTo(models.quest, {
             foreignKey: "quest_id",
             targetKey: "id"
         })

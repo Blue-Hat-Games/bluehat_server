@@ -59,3 +59,8 @@ exports.needWalletAddress = {
 	status: "fail",
 	msg: "You need to set your wallet address"
 }
+
+exports.questNotFound = {
+	status: "fail",
+	msg: "quest not found"
+}
