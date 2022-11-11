@@ -12,6 +12,10 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            action: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             title: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -20,6 +24,16 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            reward_egg: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                default: 0,
+            },
+            reward_coin: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                default: 0,
+            }
         },
         {
             sequelize,
@@ -31,10 +45,6 @@ module.exports = function (sequelize, DataTypes) {
         quest.hasMany(models.user_quest, {
             foreignKey: "quest_id",
             sourceKey: "id",
-        });
-        quest.belongsTo(models.quest_reward, {
-            foreignKey: "reward_id",
-            targetKey: "id",
         });
     };
     return quest;
