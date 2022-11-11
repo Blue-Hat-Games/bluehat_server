@@ -137,19 +137,16 @@ exports.getQuestReward = async function (req, res) {
 exports.createQuest = async function (req, res) {
     logger.info(`${req.method} ${req.originalUrl}`);
     try {
-        const { title, description, type, coin, egg } = req.body;
-        const quest_reward = await models.quest_reward.create({
-            coin: coin,
-            egg: egg,
-        });
+        const { title, description, type, coin, egg, action } = req.body;
         const quest = await models.quest.create({
             title: title,
             description: description,
             type: type,
-            quest_reward_id: quest_reward.id,
+            action: action,
+            reward_egg: egg,
+            reward_coin: coin,
         });
         return res.status(200).send(quest);
-
     } catch (e) {
         logger.error(e);
         return res.status(500).send(errorMsg.internalServerError);
