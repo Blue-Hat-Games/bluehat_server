@@ -61,7 +61,7 @@ exports.getUserQuest = async function (req, res) {
             questResultList.push(data);
         });
         let result = {
-            "quests": questResultList
+            "data": questResultList
         }
         return res.status(200).send(result);
     } catch (e) {
