@@ -38,14 +38,25 @@ exports.getUserQuest = async function (req, res) {
             where: { user_id: req.userId },
             include: [{
                 model: models.quest,
-                attributes: ["title", "description", "type"],
+                attributes: ["type", "title", "description", "action", "reward_coin", "reward_egg"],
             }],
             attributes: ["createdAt", "status", "get_reward"],
             limit: limit,
             offset: offset,
             order: [order],
         });
-        return res.status(200).send(userQuest);
+        let questResult = {
+            type: userQuest.quest.type,
+            title: userQuest.quest.title,
+            description: userQuest.quest.description,
+            action: userQuest.quest.action,
+            reward_coin: userQuest.quest.reward_coin,
+            reward_egg: userQuest.quest.reward_egg,
+            status: userQuest.status,
+            get_reward: userQuest.get_reward,
+            createdAt: userQuest.createdAt,
+        };
+        return res.status(200).send(questResult);
     } catch (e) {
         logger.error(e);
         return res.status(500).send(errorMsg.internalServerError);
@@ -138,20 +149,22 @@ exports.createQuest = async function (req, res) {
     logger.info(`${req.method} ${req.originalUrl}`);
     try {
         const { title, description, type, coin, egg, action } = req.body;
-        const quest = await models.quest.create({
+        console.log(title, description, type, coin, egg, action);
+        const result = await models.quest.create({
             title: title,
             description: description,
             type: type,
             action: action,
             reward_egg: egg,
             reward_coin: coin,
-        });
-        return res.status(200).send(quest);
+        }).then((result) => {
+            logger.info(result);
+        });;
+        return res.status(200).send(result);
     } catch (e) {
         logger.error(e);
         return res.status(500).send(errorMsg.internalServerError);
     }
-
 
 }
 
