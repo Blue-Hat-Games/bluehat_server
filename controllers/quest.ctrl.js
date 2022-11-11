@@ -34,7 +34,7 @@ exports.getUserQuest = async function (req, res) {
     const order = req.query.order;
 
     try {
-        let userQuest = await models.user_quest.findAll({
+        let userQuests = await models.user_quest.findAll({
             where: { user_id: req.userId },
             include: [{
                 model: models.quest,
@@ -45,18 +45,22 @@ exports.getUserQuest = async function (req, res) {
             offset: offset,
             order: [order],
         });
-        let questResult = {
-            "type": userQuest['quest.type'],
-            "title": userQuest['quest.title'],
-            "description": userQuest['quest.description'],
-            "action": userQuest['quest.action'],
-            "reward_coin": userQuest['quest.reward_coin'],
-            "reward_egg": userQuest['quest.reward_egg'],
-            "status": userQuest.status,
-            "get_reward": userQuest.get_reward,
-            "createdAt": userQuest.createdAt,
-        };
-        return res.status(200).send(questResult);
+        let questResultList = [];
+        userQuests.forEach((userQuest) => {
+            data = {
+                "type": userQuest.quest.type,
+                "title": userQuest.quest.title,
+                "description": userQuest.quest.description,
+                "action": userQuest.quest.action,
+                "reward_coin": userQuest.quest.reward_coin,
+                "reward_egg": userQuest.quest.reward_egg,
+                "status": userQuest.status,
+                "get_reward": userQuest.get_reward,
+                "createdAt": userQuest.createdAt
+            }
+            questResultList.push(data);
+        });
+        return res.status(200).send(questResultList);
     } catch (e) {
         logger.error(e);
         return res.status(500).send(errorMsg.internalServerError);
