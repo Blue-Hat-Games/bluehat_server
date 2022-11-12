@@ -12,7 +12,6 @@ exports.addUser = async (req, res) => {
 	if (email === undefined) {
 		return res.status(400).send(errorMsg.notEnoughRequirement);
 	}
-
 	try {
 		if ((await userUtils.getAuthUser(email)) == false) {
 			throw "EMAIL_NOT_VERIFIED";
@@ -98,7 +97,7 @@ exports.getUserInfo = async (req, res) => {
 exports.editUserInfo = async (req, res) => {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	const userId = req.userId;
-	const { username, email } = req.body;
+	const { username } = req.body;
 	try {
 		if (username !== undefined && userId !== undefined) {
 			await models.user.update({ username: username }, { where: { id: userId } });
@@ -107,11 +106,14 @@ exports.editUserInfo = async (req, res) => {
 			return res.status(400).send(errorMsg.notEnoughRequirement);
 		}
 	} catch (e) {
-		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
-		return res.send(500).send(errorMsg.internalServerError);
-	}
+		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
+			return res.status(400).send(errorMsg.duplicateUsername);
+		} else {
+			logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
+			return res.send(500).send(errorMsg.internalServerError);
+		}
+	};
 };
-
 
 exports.getUserCoin = async (req, res) => {
 	/*

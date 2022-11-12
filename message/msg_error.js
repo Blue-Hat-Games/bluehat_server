@@ -10,6 +10,10 @@ exports.duplicateInfo = {
 	msg: "dup email or wallet_address or username"
 }
 
+exports.duplicateUsername = {
+	msg: "dup username"
+}
+
 exports.fail = {
 	msg: "fail"
 }
