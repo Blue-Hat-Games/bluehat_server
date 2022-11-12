@@ -193,3 +193,24 @@ exports.updateUserEgg = async (req, res) => {
 			return res.status(500).send(errorMsg.internalServerError);
 		});
 }
+
+
+exports.updateCoinAndEgg = async (req, res) => {
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const userId = req.userId;
+	const { coin, egg } = req.body;
+	if (coin === undefined || egg === undefined) {
+		res.status(400).send(errorMsg.needParameter);
+	}
+	if (userId === undefined) {
+		res.status(400).send(errorMsg.userNotFound);
+	}
+	await models.user.increment({ coin: coin, egg: egg }, { where: { id: userId } })
+		.then(() => {
+			return res.status(200).send(infoMsg.success);
+		})
+		.catch((e) => {
+			logger.error("updateCoinAndEgg" + ": " + e);
+			return res.status(500).send(errorMsg.internalServerError);
+		});
+}
