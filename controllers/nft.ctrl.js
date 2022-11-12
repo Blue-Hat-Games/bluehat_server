@@ -121,7 +121,7 @@ exports.makeNFT = async function (req, res) {
 		try_count++;
 	}
 	if (try_count == max_try_count) {
-		await models.animal_possession.update({ nft_id: -1 }, { where: { id: animal_id } });//nft_id가 -1인 경우는 블록체인에 등록되지 않은 NFT
+		await models.animal_possession.update({ nft_id: -1 }, { where: { id: animal_id } });//nft_id가 -1인 경우는 블록체인에 등록되지 않은 것
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 };
