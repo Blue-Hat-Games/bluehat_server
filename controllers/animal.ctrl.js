@@ -222,3 +222,42 @@ exports.updateAnimal = async function (req, res, next) {
 		return res.status(500).send(errorMsg.internalServerError);
 	}
 }
+
+exports.getAnimalInfo = async function (req, res, next) {
+	logger.info(`${req.method} ${req.originalUrl}`);
+	const animal_id = req.query.id;
+	try {
+		let animal = await models.animal_possession.findAll({
+			where: { id: animal_id },
+			include: [
+				{
+					model: models.animal,
+					attributes: ["type"],
+				},
+				{
+					model: models.head_item,
+					attributes: ["filename"],
+				},
+				{
+					model: models.pattern,
+					attributes: ["filename"],
+				},
+			],
+			attributes: ["name", "tier", "color", "id"],
+			raw: true,
+		});
+		animal.forEach(element => {
+			element.animalType = element["animal.type"];
+			element.headItem = element["head_item.filename"];
+			element.pattern = element["pattern.filename"];
+			delete element["animal.type"];
+			delete element["head_item.filename"];
+			delete element["pattern.filename"];
+		});
+		return res.status(200).send(animal);
+	}
+	catch (e) {
+		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
+		return res.status(500).send(errorMsg.internalServerError);
+	}
+}

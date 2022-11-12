@@ -8,6 +8,6 @@ router.post("/merge", verifyToken, animalCtrl.mergeAnimal);
 router.post("/make-animal", verifyToken, animalCtrl.makeNewAnimal);
 router.post("/change-color", verifyToken, animalCtrl.changeAnimalColor);
 router.post('/update', verifyToken, animalCtrl.updateAnimal);
-
+router.get('/info', verifyToken, animalCtrl.getAnimalInfo);
 
 module.exports = router;
