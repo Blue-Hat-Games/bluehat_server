@@ -98,15 +98,20 @@ exports.approveToOperator = async function (sellerPrivateKey, contractAddr, toke
 
 		// Get Kip17 Contract Instance
 		const kip17 = new caver.kct.kip17(contractAddr);
-		kip17.approve(operatorKeyring.address, tokenId, { from: senderKeyring.address }).error((e) => {
-			logger.error(e);
-		}).then((result) => {
-			logger.info(result);
-			return true;
-		});
+		console.log(kip17)
+		await kip17.approve(operatorKeyring.address, tokenId, { from: senderKeyring.address })
+			.error((e) => {
+				logger.error(e);
+				return false;
+			})
+			.then((result) => {
+				logger.info(result);
+				return true;
+			});
+
 
 	} catch (e) {
-		new Error(e);
+		return false;
 	}
 
 }
@@ -124,6 +129,9 @@ exports.tradeNftByOperator = async function (contractAddr, tokenId, receiverAddr
 
 		// Get Kip17 Contract Instance
 		const kip17 = new caver.kct.kip17(contractAddr);
+		kip17.getApproved(tokenId).then((result) => {
+			console.log(result);
+		});
 
 		// Transfer NFT
 		kip17.safeTransferFrom(sellerAddr, receiverAddr, tokenId, { from: operatorKeyring.address })
@@ -175,7 +183,7 @@ exports.getKeyring = async function () {
 }
 
 // this function faucet 150 KLAY to new account
-exports.faucetKlay = function (address) {
+exports.faucetKlay = async function (address) {
 	var config = {
 		method: 'post',
 		url: 'https://api-baobab.wallet.klaytn.com/faucet/run?address=' + address,

@@ -34,19 +34,34 @@ const animalNameArray = [
 	"Kyle"];
 
 
-exports.getUserAnimal = async function (req, res, next) {
+exports.getUserAnimal = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	if (req.userId)
 		logger.info(req.userId + ":" + `${req.method} ${req.originalUrl}`);
 	try {
 		let userId = req.userId;
 		let nft = req.query.nft;
+		let market = req.query.market;
+		if (!market) {
+			market = false;
+		}
 		if (!nft) {
 			nft = false;
 		}
 		let constraint = { user_id: userId };
 		if (nft) {
 			constraint = { user_id: userId, nft_id: { [Op.ne]: null } };
+
+			if (market) {
+				let uploadAnimal = await models.market.findAll({
+					where: { user_id: userId },
+				})
+				if (uploadAnimal.length > 0) {
+					let animalId = uploadAnimal.map((animal) => animal.animal_id);
+					constraint = { user_id: userId, nft_id: { [Op.ne]: null }, id: { [Op.notIn]: animalId } };
+				}
+			}
+
 		}
 		let userAnimal = await models.animal_possession.findAll({
 			where: constraint,
