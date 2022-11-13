@@ -38,7 +38,6 @@ getEmailContents = function (authKey) {
     authKey
   )}`;
   const emailContents = ejs.render(mailContents, { link: requestUrl });
-  console.log(emailContents);
   return emailContents;
 };
 
