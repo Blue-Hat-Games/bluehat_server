@@ -35,6 +35,18 @@ exports.addUser = async (req, res) => {
 					msg: 'Register Success',
 					access_token: makeToken(user.id),
 				}
+				models.quest.findAll({
+					where: {
+						quest_type: "core"
+					}
+				}).then(quests => {
+					quests.forEach(element => {
+						models.user_quest.create({
+							user_id: user.id,
+							quest_id: element.id,
+						});
+					});
+				});
 				return res.status(201).send(register_result);
 			});
 		}
