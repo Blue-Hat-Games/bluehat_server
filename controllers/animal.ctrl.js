@@ -57,7 +57,7 @@ exports.getUserAnimal = async function (req, res) {
 					where: { user_id: userId },
 				})
 				if (uploadAnimal.length > 0) {
-					let animalId = uploadAnimal.map((animal) => animal.animal_id);
+					let animalId = uploadAnimal.map((animal) => animal.animal_possession_id);
 					constraint = { user_id: userId, nft_id: { [Op.ne]: null }, id: { [Op.notIn]: animalId } };
 				}
 			}
