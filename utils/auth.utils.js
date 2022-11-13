@@ -7,7 +7,7 @@ const redisClient = require("../utils/redis");
 // For Email Template
 var ejs = require("ejs");
 var fs = require("fs");
-var mailContents = fs.readFileSync("./views/email/signup.ejs", "ASCII");
+var mailContents = fs.readFileSync("./views/email/signup.ejs", "utf-8");
 
 // 이메일 유효성 검증
 exports.verifyEmail = function (emailStr) {
