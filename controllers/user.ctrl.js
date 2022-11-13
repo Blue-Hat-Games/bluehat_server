@@ -38,7 +38,7 @@ exports.addUser = async (req, res) => {
 				}
 				models.quest.findAll({
 					where: {
-						quest_type: "core"
+						type: "Core"
 					}
 				}).then(quests => {
 					quests.forEach(element => {
@@ -47,6 +47,7 @@ exports.addUser = async (req, res) => {
 							quest_id: element.id,
 						});
 					});
+					logger.info(`${user.id} User ${element.id} Quests Created`);
 				});
 				return res.status(201).send(register_result);
 			});
