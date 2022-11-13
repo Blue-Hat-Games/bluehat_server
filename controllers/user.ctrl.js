@@ -4,6 +4,7 @@ const errorMsg = require("../message/msg_error.js");
 const infoMsg = require("../message/msg_info.js");
 const { makeToken } = require("../utils/verify.js");
 const logger = require("../config/logger");
+const coreQuestID = [7, 9, 10]
 
 exports.addUser = async (req, res) => {
 	logger.info(`${req.method} ${req.originalUrl}`);
@@ -35,19 +36,15 @@ exports.addUser = async (req, res) => {
 					msg: 'Register Success',
 					access_token: makeToken(user.id),
 				}
-				models.quest.findAll({
-					where: {
-						type: "Core"
+				logger.info(`Register Success: ${email}`);
+				models.user_quest.bulkCreate(coreQuestID.map(quest_id => {
+					return {
+						user_id: user.id,
+						quest_id: quest_id,
+						status: false,
+						get_reward: false,
 					}
-				}).then(quests => {
-					quests.forEach(element => {
-						models.user_quest.create({
-							user_id: user.id,
-							quest_id: element.id,
-						});
-					});
-					logger.info(`${user.id} User ${element.id} Quests Created`);
-				});
+				}));
 				return res.status(201).send(register_result);
 			});
 		}
