@@ -44,12 +44,6 @@ exports.verifyAuthEmailKey = function (req, res, next) {
 	} catch (e) {
 		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 	} finally {
-		if (userEmail) {
-			res.redirect(301, `http://bluehat.games/login?email=${userEmail}`);
-		}
-		else {
-			res.redirect(301, `http://bluehat.games`);
-		}
-
+		res.redirect(301, `http://bluehat.games/auth.html`);
 	}
 };

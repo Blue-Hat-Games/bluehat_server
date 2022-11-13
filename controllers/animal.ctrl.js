@@ -40,8 +40,16 @@ exports.getUserAnimal = async function (req, res, next) {
 		logger.info(req.userId + ":" + `${req.method} ${req.originalUrl}`);
 	try {
 		let userId = req.userId;
+		let nft = req.query.nft;
+		if (!nft) {
+			nft = false;
+		}
+		let constraint = { user_id: userId };
+		if (nft) {
+			constraint = { user_id: userId, nft_id: { [Op.ne]: null } };
+		}
 		let userAnimal = await models.animal_possession.findAll({
-			where: { user_id: userId },
+			where: constraint,
 			include: [
 				{
 					model: models.animal,
@@ -59,15 +67,20 @@ exports.getUserAnimal = async function (req, res, next) {
 			attributes: ["name", "tier", "color", "id"],
 			raw: true,
 		});
+		let data = [];
 		userAnimal.forEach(element => {
-			element.animalType = element["animal.type"];
-			element.headItem = element["head_item.filename"];
-			element.pattern = element["pattern.filename"];
-			delete element["animal.type"];
-			delete element["head_item.filename"];
-			delete element["pattern.filename"];
+			let result = {
+				"name": element.name,
+				"tier": element.tier,
+				"color": element.color,
+				"id": element.id,
+				"animalType": element["animal.type"],
+				"headItem": element["head_item.filename"],
+				"pattern": element["pattern.filename"]
+			}
+			data.push(result);
 		});
-		return res.status(200).send({ "data": userAnimal });
+		return res.status(200).send({ "data": data });
 	} catch (e) {
 		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
 		return res.status(500).send(errorMsg.internalServerError);
