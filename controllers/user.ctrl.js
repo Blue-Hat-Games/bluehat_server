@@ -29,7 +29,7 @@ exports.addUser = async (req, res) => {
 				login_type: "email",
 				deleted: 0,
 				coin: 0,
-				egg: 1,
+				egg: 10,
 			}).then(user => {
 				register_result = {
 					msg: 'Register Success',
