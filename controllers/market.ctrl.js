@@ -3,7 +3,6 @@ const sequelize = require("../models").sequelize;
 const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
-const { Op } = require("sequelize");
 const nftUtils = require("../utils/nft.utils");
 
 // Show Market Animl
@@ -150,7 +149,7 @@ exports.getMarketAnimalDetail = async function (req, res) {
 
 
 // Sell Market Animal
-exports.sellAnimaltoMarket = async function (req, res, next) {
+exports.sellAnimaltoMarket = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	const { animal_id, price, seller_private_key } = req.body;
 	if (!animal_id || !price || !seller_private_key) {
@@ -161,6 +160,10 @@ exports.sellAnimaltoMarket = async function (req, res, next) {
 		let animal = await models.animal_possession.findOne({ where: { id: req.body.animal_id, user_id: req.userId } });
 		if (!animal) {
 			return res.status(400).send(errorMsg.animalNotFound);
+		}
+		let uploadedAnimal = await models.market.findOne({ where: { animal_possession_id: req.body.animal_id } });
+		if (uploadedAnimal) {
+			return res.status(400).send(errorMsg.alreadyUploaded);
 		}
 		if (!animal.nft_id) {
 			result = {
@@ -205,7 +208,7 @@ exports.buyAnimalfromMarket = async function (req, res) {
 		const buy_user = await models.user.findOne({ where: { id: req.userId } });
 		const animal = await models.market.findOne({ where: { id: buy_animal_id } });
 		const seller = await models.user.findOne({ where: { id: animal.user_id } });
-		if (buy_user.id == animal.user_id) {
+		if (buy_user.id === animal.user_id) {
 			return res.status(401).send(errorMsg.cannotBuyYourAnimal);
 		}
 		if (animal.price > buy_user.coin) {

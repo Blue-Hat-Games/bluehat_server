@@ -1,10 +1,9 @@
 const models = require("../models");
 const errorMsg = require("../message/msg_error");
-const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
 const hatUtils = require("../utils/hat.utils");
 
-exports.newHat = async function (req, res, next) {
+exports.newHat = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 
 	let user_id = req.userId;

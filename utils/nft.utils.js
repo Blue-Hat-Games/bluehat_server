@@ -1,28 +1,13 @@
-const fs = require("fs");
-var express = require("express");
-var router = express.Router();
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI('ipfs-api', '5001', { protocol: 'http' })
 var axios = require('axios');
 
 // Default Acess Key Setting
 const config = require("./config");
-const accessKeyId = config.accessKeyId;
-const secretAccessKey = config.secretAccessKey;
-const authorization = config.authorization;
 const operatorPrivateKey = config.operatorPrivateKey;
 const logger = require("../config/logger");
 const { promisify } = require("util");
-const { verify } = require("crypto");
-const { token } = require("morgan");
 const caver = config.caver;
-
-
-
-var newID = function () {
-	return Math.random().toString(36).substr(2, 16);
-};
-
 
 exports.getNft = async function (title, symbol, tokenURI, toAddr) {
 	try {

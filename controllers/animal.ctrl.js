@@ -3,7 +3,6 @@ const errorMsg = require("../message/msg_error");
 const infoMsg = require("../message/msg_info");
 const logger = require("../config/logger");
 const colorUtils = require("../utils/color.utils");
-const nftUtils = require('../utils/nft.utils');
 const { Op } = require("sequelize");
 const animalNameArray = [
 	"Pinky",
@@ -102,28 +101,27 @@ exports.getUserAnimal = async function (req, res) {
 	}
 };
 
-exports.mergeAnimal = async function (req, res, next) {
+exports.mergeAnimal = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
-	const { animalId1, animalId2, tokenURL } = req.body;
+	const { animalId1, animalId2 } = req.body;
 	if (animalId1 === undefined || animalId2 === undefined) {
 		return res.status(400).send(errorMsg.needParameter);
 	}
 	try {
-		// NFT가 아니고, 두가지 속성중 무작위 하나 선택
+
 		let animals = await models.animal_possession.findAll({
 			where: { [Op.or]: [{ id: animalId1 }, { id: animalId2 }] },
 		});
 		if (!animals[0])
 			return res.status(400).send(errorMsg.animalNotFound);
-		//1~10 사이의 숫자
+
 		let animal_type;
-		if (Math.floor(Math.random() * 10 + 1) <= 2) {//20% 확률
+		if (Math.floor(Math.random() * 10 + 1) <= 2) {
 			animal_type = Math.random() * (await models.animal.count()) + 1
 		}
 		else
 			animal_type = animals[randomVal()].animal_type;
 		let color = await colorUtils.synthesizeColor(animals[0].dataValues.color, animals[1].dataValues.color, animal_type);
-		// let user_wallet = await models.user.findOne({ where: { id: req.userId } });
 
 		function randomVal() {
 			return Math.round(Math.random());
@@ -137,9 +135,6 @@ exports.mergeAnimal = async function (req, res, next) {
 			head_item_id: animals[randomVal()].head_item_id,
 			pattern_id: animals[randomVal()].pattern_id,
 		};
-
-		// let nftMintResult = await nftUtils.getNft(title = 'Bluehat Animal', symbol = 'Bluehat', tokenURL, toAddr = user_wallet.wallet_address);
-		// new_animal['nft_hash'] = nftMintResult.transactionHash;
 
 		let new_animals = await models.animal_possession.create(new_animal);
 		let merge_result = {
@@ -165,7 +160,7 @@ exports.mergeAnimal = async function (req, res, next) {
 	}
 };
 
-exports.makeNewAnimal = async function (req, res, next) {
+exports.makeNewAnimal = async function (req, res) {
 	/*
 		1. Create New Animal to user
 	*/
@@ -210,7 +205,7 @@ exports.makeNewAnimal = async function (req, res, next) {
 	}
 };
 
-exports.changeAnimalColor = async function (req, res, next) {
+exports.changeAnimalColor = async function (req, res) {
 	/*
 		1. Change Animal Color
 	*/
@@ -233,7 +228,7 @@ exports.changeAnimalColor = async function (req, res, next) {
 	}
 };
 
-exports.updateAnimal = async function (req, res, next) {
+exports.updateAnimal = async function (req, res) {
 
 	logger.info(`${req.method} ${req.originalUrl}`);
 	const { name, tier, color, id, animalType, headItem, pattern } = req.body.data;

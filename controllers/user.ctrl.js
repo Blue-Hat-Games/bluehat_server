@@ -14,12 +14,12 @@ exports.addUser = async (req, res) => {
 		return res.status(400).send(errorMsg.notEnoughRequirement);
 	}
 	try {
-		if ((await userUtils.getAuthUser(email)) == false) {
+		if ((await userUtils.getAuthUser(email)) === false) {
 			throw "EMAIL_NOT_VERIFIED";
 		}
 		let user = await models.user.findOne({ where: { email: email } });
 		if (user) {
-			login_result = {
+			let login_result = {
 				msg: 'Login Success',
 				access_token: makeToken(user.id),
 			}
@@ -32,7 +32,7 @@ exports.addUser = async (req, res) => {
 				coin: 0,
 				egg: 10,
 			}).then(user => {
-				register_result = {
+				let register_result = {
 					msg: 'Register Success',
 					access_token: makeToken(user.id),
 				}
@@ -50,9 +50,9 @@ exports.addUser = async (req, res) => {
 		}
 	} catch (e) {
 		logger.error(`${req.method} ${req.originalUrl}` + ": " + e);
-		if (e.parent !== undefined && e.parent.code == "ER_DUP_ENTRY") {
+		if (e.parent !== undefined && e.parent.code === "ER_DUP_ENTRY") {
 			return res.status(400).send(errorMsg.duplicateInfo);
-		} else if (e == "EMAIL_NOT_VERIFIED") {
+		} else if (e === "EMAIL_NOT_VERIFIED") {
 			return res.status(409).send(errorMsg.emailNotVerified);
 		} else {
 			return res.status(500).send(errorMsg.internalServerError);
@@ -72,7 +72,7 @@ exports.delUser = async (req, res) => {
 			if (user.deleted) {
 				return res.status(409).send(errorMsg.alreadyDeleted);
 			}
-			delEmail = 'deleted.' + email;
+			let delEmail = 'deleted.' + email;
 			await models.user.update({ deleted: true, email: delEmail }, { where: { email: email } });
 		}
 		return res.status(200).send(infoMsg.success);

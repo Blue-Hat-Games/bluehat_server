@@ -68,3 +68,7 @@ exports.questNotFound = {
 	status: "fail",
 	msg: "quest not found"
 }
+
+exports.alreadyUploaded = {
+	msg: "already uploaded"
+}
