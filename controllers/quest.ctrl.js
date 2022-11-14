@@ -17,7 +17,7 @@ exports.getUserQuest = async function (req, res) {
     const offset = (parseInt(req.query.page) - 1) * parseInt(req.query.limit);
     const limit = parseInt(req.query.limit);
 
-    orderInfo = {
+    let orderInfo = {
         Recently: ["createdAt", "DESC"],
         Oldest: ["createdAt", "ASC"],
     };
@@ -47,7 +47,7 @@ exports.getUserQuest = async function (req, res) {
         });
         let questResultList = [];
         userQuests.forEach((userQuest) => {
-            data = {
+            let data = {
                 "id": userQuest.quest.id,
                 "type": userQuest.quest.type,
                 "title": userQuest.quest.title,
@@ -77,7 +77,7 @@ exports.getUserQuestCount = async function (req, res) {
     logger.info(`${req.method} ${req.originalUrl}`);
     try {
         let count = await models.user_quest.count({ where: { user_id: req.userId, status: false } });
-        result = {
+        let result = {
             "status": "success",
             "data": {
                 "totalCount": count
@@ -99,7 +99,7 @@ exports.completeQuest = async function (req, res) {
         if (!userQuest) {
             return res.status(400).send(errorMsg.questNotFound);
         }
-        if (userQuest.status == true) {
+        if (userQuest.status === true) {
             return res.status(400).send(errorMsg.questAlreadyCompleted);
         }
         userQuest.status = true;
@@ -119,13 +119,13 @@ exports.getQuestReward = async function (req, res) {
         if (!userQuest) {
             return res.status(404).send(errorMsg.questNotFound);
         }
-        if (userQuest.status == false) {
+        if (!userQuest.status) {
             return res.status(400).send(errorMsg.questNotCompleted);
         }
-        if (userQuest.status == true && userQuest.get_reward == true) {
+        if (userQuest.status && userQuest.get_reward) {
             return res.status(400).send(errorMsg.questAlreadyGetReward);
         }
-        if (userQuest.status == true && userQuest.get_reward == false) {
+        if (userQuest.status && !userQuest.get_reward) {
             await models.user_quest.update({ get_reward: true }, { where: { user_id: req.userId, quest_id: quest_id } });
             models.quest.findOne({
                 where: { id: quest_id },
@@ -168,7 +168,7 @@ exports.createQuest = async function (req, res) {
             reward_coin: coin,
         }).then((result) => {
             logger.info(result);
-        });;
+        });
         return res.status(200).send(result);
     } catch (e) {
         logger.error(e);

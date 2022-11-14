@@ -3,7 +3,7 @@ const infoMsg = require("../message/msg_info");
 const errorMsg = require("../message/msg_error");
 const logger = require("../config/logger");
 
-exports.verifyAuthEmail = function (req, res, next) {
+exports.verifyAuthEmail = function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	try {
 		const userMailAdress = req.body.email;
@@ -11,7 +11,7 @@ exports.verifyAuthEmail = function (req, res, next) {
 
 		if (authUtils.verifyEmail(userMailAdress)) {
 			authUtils.setAuthUser(userMailAdress, false);
-			sendResult = authUtils.sendVerifyEmail(userMailAdress, authKey);
+			let sendResult = authUtils.sendVerifyEmail(userMailAdress, authKey);
 			if (sendResult) {
 				res.status(200).send(infoMsg.success);
 			} else {
@@ -26,7 +26,7 @@ exports.verifyAuthEmail = function (req, res, next) {
 	}
 };
 
-exports.verifyAuthEmailKey = function (req, res, next) {
+exports.verifyAuthEmailKey = function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 	let userEmail = ''
 	try {

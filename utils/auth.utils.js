@@ -37,8 +37,7 @@ getEmailContents = function (authKey) {
   const requestUrl = `http://api.bluehat.games/auth?authKey=${encodeURIComponent(
     authKey
   )}`;
-  const emailContents = ejs.render(mailContents, { link: requestUrl });
-  return emailContents;
+  return ejs.render(mailContents, {link: requestUrl});
 };
 
 // Mailgun API를 활용해 인증 메일 전송
