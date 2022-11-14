@@ -38,7 +38,7 @@ exports.getUserQuest = async function (req, res) {
             where: { user_id: req.userId },
             include: [{
                 model: models.quest,
-                attributes: ["type", "title", "description", "action", "reward_coin", "reward_egg"],
+                attributes: ["id", "type", "title", "description", "action", "reward_coin", "reward_egg"],
             }],
             attributes: ["createdAt", "status", "get_reward"],
             limit: limit,
@@ -48,6 +48,7 @@ exports.getUserQuest = async function (req, res) {
         let questResultList = [];
         userQuests.forEach((userQuest) => {
             data = {
+                "id": userQuest.quest.id,
                 "type": userQuest.quest.type,
                 "title": userQuest.quest.title,
                 "description": userQuest.quest.description,
@@ -92,8 +93,9 @@ exports.getUserQuestCount = async function (req, res) {
 exports.completeQuest = async function (req, res) {
     logger.info(`${req.method} ${req.originalUrl}`);
     try {
-        const { quest_id } = req.body;
-        const userQuest = await models.user_quest.findOne({ where: { user_id: req.userId, quest_id: quest_id } });
+        const { action } = req.body;
+        const quest = await models.quest.findOne({ where: { action: action } });
+        const userQuest = await models.user_quest.findOne({ where: { user_id: req.userId, quest_id: quest.id } });
         if (!userQuest) {
             return res.status(400).send(errorMsg.questNotFound);
         }
