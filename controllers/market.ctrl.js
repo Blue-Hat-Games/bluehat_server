@@ -11,11 +11,11 @@ exports.getAllMarketAnimal = async function (req, res) {
 	logger.info(`${req.method} ${req.originalUrl}`);
 
 	// Setting Default
-	if (!req.query.page) {
+	if (!req.query.page || req.query.page < 1) {
 		req.query.page = 1;
 	}
 	if (!req.query.limit) {
-		req.query.limit = 20;
+		req.query.limit = 5;
 	}
 	const offset = (parseInt(req.query.page) - 1) * parseInt(req.query.limit);
 	const limit = parseInt(req.query.limit);
