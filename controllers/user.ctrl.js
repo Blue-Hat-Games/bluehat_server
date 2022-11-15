@@ -211,9 +211,11 @@ exports.updateCoinAndEgg = async (req, res) => {
 	const { coin, egg } = req.body;
 	if (coin === undefined || egg === undefined) {
 		res.status(400).send(errorMsg.needParameter);
+		return;
 	}
 	if (userId === undefined) {
 		res.status(400).send(errorMsg.userNotFound);
+		return;
 	}
 	await models.user.increment({ coin: coin, egg: egg }, { where: { id: userId } })
 		.then(() => {
